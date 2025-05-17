@@ -1,0 +1,160 @@
+@use "@scss/variables" as *;
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+/* Largura da barra de rolagem */
+::-webkit-scrollbar {
+    width: 0px;
+}
+/* Preloader */
+#preloader {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    background: rgba(0,0,0,0.3);
+}
+.loader {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -13px;
+    margin-left: -13px;
+    border-radius: 60px;
+    animation: loader 0.8s linear infinite;
+    -webkit-animation: loader 0.8s linear infinite;
+}
+@keyframes loader {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        border: 4px solid #ffffff;
+        border-left-color: transparent;
+    }
+    50% {
+        -webkit-transform: rotate(180deg);
+        transform: rotate(180deg);
+        border: 4px solid #bedaff;
+        border-left-color: transparent;
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+        border: 4px solid #ffffff;
+        border-left-color: transparent;
+    }
+}
+@-webkit-keyframes loader {
+    0% {
+        -webkit-transform: rotate(0deg);
+        border: 4px solid #ffffff;
+        border-left-color: transparent;
+    }
+    50% {
+        -webkit-transform: rotate(180deg);
+        border: 4px solid #bedaff;
+        border-left-color: transparent;
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        border: 4px solid #ffffff;
+        border-left-color: transparent;
+    }
+}
+/*System*/
+.red--text{
+    color: rgb(255, 70, 70);
+}
+.separator{
+    width: 100%;
+    height: 1px;
+    background-color: rgb(220, 220, 220);
+}
+.menu{
+    list-style: none;
+    padding: 5px;
+}
+.nav-item{
+
+    a{
+        padding: 8px;
+        border-radius: 3px;
+        color: #555;
+        text-decoration: none;
+        display: block;
+
+        .item{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    }
+    a:hover{
+        background-color: rgb(238, 240, 242);
+    }
+}
+/*DataTable*/
+table{
+    tr{
+        font-size: 12pt;
+
+        th{
+            font-weight: bold !important;
+        }
+
+        th:last-child{
+
+            text-align: center !important;
+        }
+        td:last-child{
+
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+
+            span{
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+@media(max-width: 900px){
+    table{
+        thead{
+            display: none;
+        }
+        tbody{
+            display: flex;
+            flex-direction: column;
+            tr{
+                border-bottom: solid 2px $secondary;
+                td{
+                    display: flex;
+                    gap: 5px;
+                    border: none;
+                }
+                td:last-child{
+                    justify-content: start;
+                }
+                td:before{
+                    content: attr(data-cell) ":";
+                    font-weight: 700;
+                    text-transform: capitalize;
+                }
+            }
+        }
+    }
+}

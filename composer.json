@@ -1,0 +1,17 @@
+{
+    "name": "alex/myframework",
+    "description": "Um microframework PHP estilo Laravel",
+    "type": "project",
+    "autoload": {
+      "psr-4": {
+        "App\\": "app/"
+      },
+      "files": [
+        "app/helpers.php"
+      ]
+    },
+    "require": {
+        "symfony/console": "^7.2",
+        "symfony/var-dumper": "^7.2"
+    }
+  }
