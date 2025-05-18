@@ -55,6 +55,7 @@ import model from "@/Modules/model.js"
 import Message from '@/components/Message.vue'
 import emitter from "@/eventBus.js"
 import { navigateTo } from '@/navigation/navigateTo'
+import session from 'js-cookie'
 
 //Instancia vuex
 const store = useStore()
@@ -113,6 +114,12 @@ function login(){
             });
 
         message('success', response.data.success)
+
+        session.set('_userid', response.data.user.userid)
+        session.set('_username', response.data.user.username)
+        session.set('_useremail', response.data.user.useremail)
+        session.set('_userlevel', response.data.user.userlevel)
+        session.set('_userlevelname', response.data.user.userlevelname)
 
         navigateTo(`${store.state.urlBase}`)
 

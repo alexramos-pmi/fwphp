@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [vue()],
   resolve: {
     alias: {
@@ -10,15 +10,14 @@ export default defineConfig({
       '@scss': path.resolve(__dirname, 'resources/js/scss'),
     },
   },
-  root: 'resources', // onde ficam seus arquivos .vue e main.js
-  base: '/resources/', // base pública usada no script type="module"
+  root: 'resources', // ponto de entrada para o Vite
+  base: mode === 'production' ? '/dist/' : '/resources/', // base correta por ambiente
   server: {
     host: 'localhost',
     port: 5173,
     proxy: {
-      // tudo que não for .js/.css será enviado ao PHP
       '^/(?!resources|@vite|node_modules).*': {
-        target: 'http://localhost', // onde roda seu PHP (ex: XAMPP, Apache)
+        target: 'http://localhost',
         changeOrigin: true,
       }
     }
@@ -31,4 +30,4 @@ export default defineConfig({
       input: 'resources/js/main.js'
     }
   }
-})
+}))

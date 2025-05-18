@@ -29,16 +29,18 @@ class Authenticate
             }
             else 
             {
+                $urlBase = env('APP_URL');
+
                 // Redirecionamento para o login em acesso direto/refresh
                 if(!headers_sent())
                 {
-                    header('Location: http://localhost/myframework/public/login');
+                    header("Location: {$urlBase}/login");
                     
                     exit;
                 } 
                 else
                 {
-                    echo "<script>window.location.href = 'http://localhost/myframework/public/login';</script>";
+                    echo "<script>window.location.href = '{$urlBase}/login';</script>";
 
                     exit;
                 }

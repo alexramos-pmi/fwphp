@@ -110,6 +110,7 @@ import model from "@/Modules/model.js"
 import Link from "@/components/Link.vue"
 import emitter from "@/eventBus.js"
 import Message from '@/components/Message.vue'
+import session from 'js-cookie'
 
 //Instancia vuex
 const store = useStore()
@@ -153,6 +154,13 @@ function logout(){
 
   model.apiPost('logout', formData).then(response => {
 
+    //Limpa os cookies
+    session.remove('_userid')
+    session.remove('_username')
+    session.remove('_useremail')
+    session.remove('_userlevel')
+    session.remove('_userlevelname')
+    
     //Gera uma mensagem na tela
     store.commit('updateStateProperty', {
       objectName: 'snackbar',

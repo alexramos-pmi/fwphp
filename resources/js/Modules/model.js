@@ -11,7 +11,7 @@ else{
   console.warn('CSRF token não encontrado no <meta>')
 }
 
-axios.defaults.baseURL = 'http://localhost/myframework/public'
+axios.defaults.baseURL = 'http://localhost/fwphp/public'
 axios.defaults.headers.common['accept'] = 'application/json'
 
 export default {

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Core\Auth;
 use App\Http\Request;
-use App\Models\Usuario;
 use App\Foundation\Http;
 
 class AuthController
@@ -24,7 +23,15 @@ class AuthController
                 throw new Exception('Credenciais inválidas.');
             }
 
-            return response()->json(['success' => "Login efetuado com sucesso"], Http::OK);
+            $user = [
+                'userid' => Auth::user()->id,
+                'username' => Auth::user()->name,
+                'useremail' => Auth::user()->email,
+                'userlevel' => Auth::user()->level,
+                'userlevelname' => Auth::user()->level_name
+            ];
+
+            return response()->json(['success' => "Login efetuado com sucesso", 'user' => $user], Http::OK);
         }
         catch(Exception $e)
         {

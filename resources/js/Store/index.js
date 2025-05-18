@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 
 export default createStore({
     state:{
-        urlBase: 'http://localhost/myframework/public',
+        urlBase: 'http://localhost/fwphp/public',
         modal: false,
         modalDel: false,
         modalPdf: false,

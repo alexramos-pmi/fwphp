@@ -23,13 +23,14 @@ abstract class Model
 
     protected static function initDB(): void
     {
+        $dbConn = env('DB_CONNECTION');
         $dbHost = env("DB_HOST");
         $dbName = env("DB_NAME");
         $dbUsername = env("DB_USERNAME");
         $dbPassword = env("DB_PASSWORD");
 
         if (self::$db === null) {
-            self::$db = new PDO("mysql:host={$dbHost};dbname={$dbName}", "{$dbUsername}", "{$dbPassword}");
+            self::$db = new PDO("{$dbConn}:host={$dbHost};dbname={$dbName}", "{$dbUsername}", "{$dbPassword}");
             self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
     }
