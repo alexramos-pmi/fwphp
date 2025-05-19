@@ -14,16 +14,9 @@ if(!isset($_SESSION['_csrf_token']))
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$env = env('APP_ENV') ?: 'local';
+use App\Routing\Route;
 
-if($env === 'production')
-{
-    loadEnv(__DIR__ . '/../.env.production');
-}
-else
-{
-    loadEnv();
-}
+loadEnv();
 
 //Display errors
 if(env('APP_ENV') === 'production')
@@ -37,8 +30,6 @@ else
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 }
-
-use App\Routing\Route;
 
 // Carrega rotas do sistema
 require_once __DIR__ . '/../routes/web.php';

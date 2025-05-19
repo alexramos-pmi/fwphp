@@ -1,6 +1,7 @@
 <?php
 
 use Symfony\Component\VarDumper\VarDumper;
+use Dotenv\Dotenv;
 
 if(!function_exists('csrf'))
 {
@@ -28,6 +29,51 @@ if(!function_exists('method'))
     {
         return '<input type="hidden" name="_method" value="' . htmlspecialchars(strtoupper($method), ENT_QUOTES, 'UTF-8') . '">';
     }
+}
+
+function vite(string $entry)
+{
+    $isDev = ($_ENV['APP_ENV'] ?? 'local') === 'local';
+
+    if($isDev)
+    {
+        // Usa o servidor de desenvolvimento Vite
+            return <<<HTML
+                <script type="module" src="http://localhost:5173/resources/@vite/client"></script>
+                <script type="module" src="http://localhost:5173/{$entry}"></script>
+            HTML;
+    }
+
+    // Produção: usa arquivos compilados
+    $manifestPath = __DIR__ . '/../public/dist/manifest.json';
+
+    if(!file_exists($manifestPath))
+    {
+        throw new Exception("Vite manifest file not found at {$manifestPath}");
+    }
+
+    $manifest = json_decode(file_get_contents($manifestPath), true);
+
+    if(!isset($manifest[$entry]))
+    {
+        throw new Exception("Entry {$entry} not found in Vite manifest");
+    }
+
+    $path = '/dist/' . $manifest[$entry]['file'];
+
+    $imports = '';
+
+    if(!empty($manifest[$entry]['css']))
+    {
+        foreach($manifest[$entry]['css'] as $css)
+        {
+            $imports .= "<link rel=\"stylesheet\" href=\"/dist/{$css}\">\n";
+        }
+    }
+
+    return <<<HTML
+        {$imports}<script type="module" src="{$path}"></script>
+    HTML;
 }
 
 if(!function_exists('dd'))
@@ -72,69 +118,40 @@ if(!function_exists('bcrypt'))
 
 if(!function_exists('loadEnv'))
 {
-    function loadEnv(string $path = __DIR__ . '/../.env'): void
+    function loadEnv(): void
     {
-        if(isset($_SERVER['_ENV_LOADED']) || !file_exists($path))
+        $dotenvPath = dirname(__DIR__); // ou ajuste para o caminho da raiz do projeto
+        $envFile = '.env';
+
+        // Se existir variável de ambiente APP_ENV no servidor, use-a
+        $env = $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null;
+
+        if(!$env && file_exists("$dotenvPath/.env"))
         {
-            return;
+            // Carrega o arquivo temporariamente para descobrir o ambiente
+            $lines = file("$dotenvPath/.env", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+            foreach($lines as $line)
+            {
+                if(str_starts_with($line, 'APP_ENV='))
+                {
+                    $env = trim(explode('=', $line, 2)[1]);
+                    break;
+                }
+            }
         }
 
-        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-        foreach($lines as $line)
+        // Se for produção, use .env.production
+        if($env === 'production')
         {
-            $line = trim($line);
-
-            if($line === '' || str_starts_with($line, '#'))
-            {
-                continue;
-            }
-
-            // Ignora linhas sem "="
-            if(!str_contains($line, '='))
-            {
-                continue;
-            }
-
-            [$key, $value] = explode('=', $line, 2);
-            $key = trim($key);
-            $value = trim($value);
-
-            // Remove aspas se necessário
-            if(
-                (str_starts_with($value, '"') && str_ends_with($value, '"')) ||
-                (str_starts_with($value, "'") && str_ends_with($value, "'"))
-            )
-            {
-                $value = substr($value, 1, -1);
-            }
-
-            // Conversões de tipo
-            $lower = strtolower($value);
-
-            if($lower === 'true')
-            {
-                $value = true;
-            }
-            elseif ($lower === 'false')
-            {
-                $value = false;
-            }
-            elseif ($lower === 'null')
-            {
-                $value = null;
-            }
-            elseif (is_numeric($value))
-            {
-                $value = $value + 0; // converte para int ou float
-            }
-
-            // Define nas superglobais e ambiente
-            $_ENV[$key] = $value;
-            putenv("$key=" . (is_bool($value) ? ($value ? 'true' : 'false') : $value));
+            $envFile = '.env.production';
         }
 
-        $_SERVER['_ENV_LOADED'] = true;
+        if(file_exists("$dotenvPath/$envFile"))
+        {
+            $dotenv = Dotenv::createImmutable($dotenvPath, $envFile);
+            $dotenv->load();
+        }
     }
 }
 
