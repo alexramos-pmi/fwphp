@@ -59,15 +59,19 @@ class Route
 
     public static function dispatch(string $requestUri, string $method = 'GET'): void
     {
-        $uri = parse_url($requestUri, PHP_URL_PATH);
-        //$uri = trim(parse_url($requestUri, PHP_URL_PATH), '/');
+        $uri = trim(parse_url($requestUri, PHP_URL_PATH), '/');
 
-        //dd($requestUri, $uri);
+        if(env('APP_ENV') !== 'production')
+        {
+            $uri = parse_url($requestUri, PHP_URL_PATH);
 
-        $scriptName = dirname($_SERVER['SCRIPT_NAME']);
-        if ($scriptName !== '/' && str_starts_with($uri, $scriptName)) {
-            $uri = substr($uri, strlen($scriptName));
-            $uri = trim($uri, '/');
+            $scriptName = dirname($_SERVER['SCRIPT_NAME']);
+
+            if($scriptName !== '/' && str_starts_with($uri, $scriptName))
+            {
+                $uri = substr($uri, strlen($scriptName));
+                $uri = trim($uri, '/');
+            }
         }
 
         if ($method === 'POST' && isset($_POST['_method'])) {

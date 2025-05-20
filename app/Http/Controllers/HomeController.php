@@ -6,6 +6,6 @@ class HomeController
 {
     public function index()
     {
-        view('Home/Index');
+        return inertia('Home', ['mensagem' => 'Bem-vindo!']);
     }
 }

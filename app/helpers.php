@@ -31,51 +31,6 @@ if(!function_exists('method'))
     }
 }
 
-function vite(string $entry)
-{
-    $isDev = ($_ENV['APP_ENV'] ?? 'local') === 'local';
-
-    if($isDev)
-    {
-        // Usa o servidor de desenvolvimento Vite
-            return <<<HTML
-                <script type="module" src="http://localhost:5173/resources/@vite/client"></script>
-                <script type="module" src="http://localhost:5173/{$entry}"></script>
-            HTML;
-    }
-
-    // Produção: usa arquivos compilados
-    $manifestPath = __DIR__ . '/../public/dist/manifest.json';
-
-    if(!file_exists($manifestPath))
-    {
-        throw new Exception("Vite manifest file not found at {$manifestPath}");
-    }
-
-    $manifest = json_decode(file_get_contents($manifestPath), true);
-
-    if(!isset($manifest[$entry]))
-    {
-        throw new Exception("Entry {$entry} not found in Vite manifest");
-    }
-
-    $path = '/dist/' . $manifest[$entry]['file'];
-
-    $imports = '';
-
-    if(!empty($manifest[$entry]['css']))
-    {
-        foreach($manifest[$entry]['css'] as $css)
-        {
-            $imports .= "<link rel=\"stylesheet\" href=\"/dist/{$css}\">\n";
-        }
-    }
-
-    return <<<HTML
-        {$imports}<script type="module" src="{$path}"></script>
-    HTML;
-}
-
 if(!function_exists('dd'))
 {
     function dd(...$vars)
@@ -88,15 +43,57 @@ if(!function_exists('dd'))
     }
 }
 
-if(!function_exists('view'))
+if(!function_exists('inertia'))
 {
-    function view(string $component, array $props = [], string $title = 'Mini Framework')
+    function inertia($component, $props = [])
     {
-        // Disponibiliza os dados para o layout
-        $page = $component;
-        $jsonProps = json_encode($props); // se quiser passar props futuramente
+        $page = [
+            'component' => $component,
+            'props' => $props,
+            'url' => $_SERVER['REQUEST_URI'],
+            'version' => '',
+        ];
 
-        require __DIR__ . '/../resources/views/layout.php';
+        if($_SERVER['HTTP_X_INERTIA'] ?? false)
+        {
+            header('Vary: Accept');
+            header('X-Inertia: true');
+            header('Content-Type: application/json');
+            echo json_encode(['component' => $component, 'props' => $props, 'url' => $page['url'], 'version' => '']);
+        }
+        else
+        {
+            include __DIR__ . '../../resources/views/app.php';
+        }
+    }
+}
+
+if(!function_exists('vite'))
+{
+    function vite($entry)
+    {
+        //Em modo de desenvolvimento
+        if(env('APP_ENV') !== 'production')
+        {
+            return '<script type="module" src="http://localhost:5173/' . $entry . '"></script>';
+        }
+
+        //Em modo de produção
+        $manifestPath = __DIR__ . '../../public/build/.vite/manifest.json';
+
+        if (!file_exists($manifestPath)) {
+            return '<!-- manifest.json não encontrado -->';
+        }
+
+        $manifest = json_decode(file_get_contents($manifestPath), true);
+
+        if (!isset($manifest[$entry])) {
+            return "<!-- Entrada {$entry} não encontrada no manifest -->";
+        }
+
+        $file = $manifest[$entry]['file'];
+
+        return "<script type=\"module\" src=\"/build/{$file}\"></script>";
     }
 }
 
