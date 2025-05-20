@@ -1,4 +1,4 @@
-@use "@scss/variables" as *;
+@use "../js/scss/variables" as *;
 
 *{
     margin: 0;
@@ -13,6 +13,9 @@
     width: 0px;
 }
 /* Preloader */
+.teste-color{
+    color: blueviolet;
+}
 #preloader {
     position: fixed;
     width: 100%;

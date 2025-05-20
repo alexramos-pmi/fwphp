@@ -72,28 +72,45 @@ if(!function_exists('vite'))
 {
     function vite($entry)
     {
-        //Em modo de desenvolvimento
-        if(env('APP_ENV') !== 'production')
+        // Modo desenvolvimento? Verifica se o Vite está rodando em localhost:5173
+
+        if(env('APP_ENV') !== "production")
         {
-            return '<script type="module" src="http://localhost:5173/' . $entry . '"></script>';
+            // Modo desenvolvimento (Vite Dev Server ativo)
+            $url = "http://localhost:5173/{$entry}";
+
+            return <<<HTML
+                <script type="module" src="{$url}"></script>
+            HTML;
         }
 
-        //Em modo de produção
-        $manifestPath = __DIR__ . '../../public/build/.vite/manifest.json';
+        // Modo produção: lê o manifest
+        $manifestPath = __DIR__ . '/../public/build/.vite/manifest.json';
 
         if (!file_exists($manifestPath)) {
-            return '<!-- manifest.json não encontrado -->';
+            throw new Exception("Vite manifest não encontrado: {$manifestPath}");
         }
 
         $manifest = json_decode(file_get_contents($manifestPath), true);
 
         if (!isset($manifest[$entry])) {
-            return "<!-- Entrada {$entry} não encontrada no manifest -->";
+            throw new Exception("Entrada '{$entry}' não encontrada no manifest.");
         }
 
-        $file = $manifest[$entry]['file'];
+        $tags = '';
 
-        return "<script type=\"module\" src=\"/build/{$file}\"></script>";
+        // CSS
+        if (isset($manifest[$entry]['css'])) {
+            foreach ($manifest[$entry]['css'] as $cssFile) {
+                $tags .= '<link rel="stylesheet" href="/build/' . $cssFile . '">' . PHP_EOL;
+            }
+        }
+
+        // JS
+        $jsFile = $manifest[$entry]['file'];
+        $tags .= '<script type="module" src="/build/' . $jsFile . '"></script>' . PHP_EOL;
+
+        return $tags;
     }
 }
 
