@@ -87,21 +87,25 @@ if(!function_exists('vite'))
         // Modo produção: lê o manifest
         $manifestPath = __DIR__ . '/../public/build/.vite/manifest.json';
 
-        if (!file_exists($manifestPath)) {
+        if(!file_exists($manifestPath))
+        {
             throw new Exception("Vite manifest não encontrado: {$manifestPath}");
         }
 
         $manifest = json_decode(file_get_contents($manifestPath), true);
 
-        if (!isset($manifest[$entry])) {
+        if(!isset($manifest[$entry]))
+        {
             throw new Exception("Entrada '{$entry}' não encontrada no manifest.");
         }
 
         $tags = '';
 
         // CSS
-        if (isset($manifest[$entry]['css'])) {
-            foreach ($manifest[$entry]['css'] as $cssFile) {
+        if(isset($manifest[$entry]['css']))
+        {
+            foreach($manifest[$entry]['css'] as $cssFile)
+            {
                 $tags .= '<link rel="stylesheet" href="/build/' . $cssFile . '">' . PHP_EOL;
             }
         }
