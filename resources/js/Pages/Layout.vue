@@ -107,10 +107,10 @@
 import { useStore } from 'vuex'
 
 import model from "@/Modules/model.js"
-import Link from "@/components/Link.vue"
-import emitter from "@/eventBus.js"
 import Message from '@/components/Message.vue'
 import session from 'js-cookie'
+import { Inertia } from '@inertiajs/inertia'
+import { Link } from '@inertiajs/inertia-vue3'
 
 //Instancia vuex
 const store = useStore()
@@ -122,20 +122,20 @@ openMenu()
 
 function loading(){
 
-  emitter.on('navigate:start', () => {
-          
-    store.commit('updateStateProperty', {
-      objectName: 'loading',
-      value: true
-    });
+  Inertia.on('start', () => {
+
+      store.commit('updateStateProperty', {
+          objectName: 'loading',
+          value: true
+      });
   })
 
-  emitter.on('navigate:finish', () => {
+  Inertia.on('finish', () => {
 
-    store.commit('updateStateProperty', {
-      objectName: 'loading',
-      value: false
-    });
+      store.commit('updateStateProperty', {
+          objectName: 'loading',
+          value: false
+      });
   })
 }
 

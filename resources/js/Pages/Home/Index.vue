@@ -11,32 +11,13 @@
   </Layout>
 </template>
 
-<script>
+<script setup>
 
-import Link from '@/components/Link.vue'
-//import { navigateTo } from '@/navigation/navigateTo'
-import Layout from '@/pages/Layout.vue'
+import Layout from '@/Pages/Layout.vue'
+import { Inertia } from '@inertiajs/inertia'
 
-export default {
-    name: "Index",
-    components: {
-        Link,
-        Layout
-    },
-    props: [
-        //
-    ],
-    data(){
-        return{
-            //
-        }
-    },
-    methods: {
+function userTo(){
 
-      userTo(){
-
-        //navigateTo(`${this.$store.state.urlBase}/usuarios`)
-      }
-    }
+  Inertia.visit(`${store.state.urlBase}/usuarios`)
 }
 </script>

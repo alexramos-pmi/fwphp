@@ -2,7 +2,6 @@
 
 use App\Routing\Route;
 
-Route::get('/', 'HomeController@index');
 //AUTH
 Route::get('login', 'AuthController@showLoginForm');
 Route::post('login', 'AuthController@login');
@@ -13,7 +12,7 @@ Route::middleware(['auth'])->group(function()
     //MENU
     Route::get('menus', 'MenuController@index');
     //HOME
-    //Route::get('/', 'HomeController@index');
+    Route::get('/', 'HomeController@index');
     //USUÁRIO
     Route::get('usuarios', 'UsuarioController@index');
     Route::post('usuarios/store', 'UsuarioController@store');

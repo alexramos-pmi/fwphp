@@ -53,9 +53,8 @@ import { useStore } from 'vuex'
 
 import model from "@/Modules/model.js"
 import Message from '@/components/Message.vue'
-import emitter from "@/eventBus.js"
-import { navigateTo } from '@/navigation/navigateTo'
 import session from 'js-cookie'
+import { Inertia } from '@inertiajs/inertia'
 
 //Instancia vuex
 const store = useStore()
@@ -65,20 +64,21 @@ checkLogin()
 
 function loading(){
 
-    emitter.on('navigate:start', () => {
-          
-        store.commit('updateStateProperty', {
+Inertia.on('start', () => {
+
+    store.commit('updateStateProperty', {
         objectName: 'loading',
         value: true
-        });
-    })
+    });
+  })
 
-    emitter.on('navigate:finish', () => {
-        store.commit('updateStateProperty', {
-        objectName: 'loading',
-        value: false
-        });
-    })
+  Inertia.on('finish', () => {
+
+      store.commit('updateStateProperty', {
+          objectName: 'loading',
+          value: false
+      });
+  })
 }
 
 function checkLogin(){
@@ -89,7 +89,7 @@ function checkLogin(){
 
         if(check){
 
-            navigateTo(`${store.state.urlBase}`)
+            Inertia.visit(`${store.state.urlBase}`)
         }
     })
 }
@@ -121,7 +121,7 @@ function login(){
         session.set('_userlevel', response.data.user.userlevel)
         session.set('_userlevelname', response.data.user.userlevelname)
 
-        navigateTo(`${store.state.urlBase}`)
+        Inertia.visit(`${store.state.urlBase}`)
 
     }).catch(error => {
 
@@ -151,7 +151,7 @@ function message(type, body){
 <style scoped lang="scss">
 
 @use "sass:color";
-@use "@scss/variables" as *;
+@use "../../js/scss/variables.scss" as *;
 
 .logo-container{
     height: 100vh;

@@ -6,6 +6,6 @@ class HomeController
 {
     public function index()
     {
-        return inertia('Home', ['mensagem' => 'Bem-vindo!']);
+        return inertia('Home/Index', ['mensagem' => 'Bem-vindo!']);
     }
 }

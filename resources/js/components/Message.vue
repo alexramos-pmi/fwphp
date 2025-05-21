@@ -40,7 +40,7 @@ function close(){
 <style scoped lang="scss">
 
 @use 'sass:color';
-@use "@scss/variables" as *;
+@use "../scss/variables.scss" as *;
 
 .box-delete{
     width: 100%;

@@ -11,7 +11,7 @@ class AuthController
 {
     public function showLoginForm()
     {
-        view('Login');
+        inertia('Login');
     }
 
     public function login(Request $request)

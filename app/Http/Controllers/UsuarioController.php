@@ -30,7 +30,7 @@ class UsuarioController
             }
         }
 
-        view('Usuario/Index', compact('list'));
+        inertia('Usuario/Index', compact('list'));
     }
 
     public function store(Request $request)
