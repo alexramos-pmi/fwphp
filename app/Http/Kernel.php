@@ -7,6 +7,7 @@ use App\Http\Request;
 class Kernel
 {
     protected static array $globalMiddlewares = [
+        \App\Http\Middleware\Cors::class,
         \App\Http\Middleware\VerifyCsrfToken::class,
     ];
 

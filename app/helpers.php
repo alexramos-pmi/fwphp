@@ -183,6 +183,23 @@ if(!function_exists('env'))
     }
 }
 
+if(!function_exists('logger'))
+{
+    function logger(string $message, string $level = 'info'): void
+    {
+        $file = __DIR__ . '/../storage/logs/' . date('Y-m-d') . '.log';
+
+        $entry = sprintf(
+            "[%s] [%s] %s\n",
+            date('Y-m-d H:i:s'),
+            strtoupper($level),
+            $message
+        );
+
+        file_put_contents($file, $entry, FILE_APPEND);
+    }
+}
+
 if(!function_exists('render404'))
 {
     function render404(string $uri): void
