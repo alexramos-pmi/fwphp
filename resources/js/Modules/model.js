@@ -12,7 +12,9 @@ else{
 }
 
 axios.defaults.baseURL = 'http://localhost/fwphp/public'
+//axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.headers.common['accept'] = 'application/json'
+axios.defaults.withCredentials = true;
 
 export default {
 

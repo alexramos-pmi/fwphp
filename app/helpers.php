@@ -101,6 +101,8 @@ if(!function_exists('vite'))
 
         $tags = '';
 
+        //dd($manifest[$entry]);
+
         // CSS
         if(isset($manifest[$entry]['css']))
         {
@@ -178,6 +180,79 @@ if(!function_exists('env'))
     function env(string $key, mixed $default = null): mixed
     {
         return $_ENV[$key] ?? getenv($key) ?? $default;
+    }
+}
+
+if(!function_exists('render404'))
+{
+    function render404(string $uri): void
+    {
+        echo <<<HTML
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <title>404 - Página não encontrada</title>
+                    <style>
+                        body {
+                            background: #f8f9fa;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                            color: #333;
+                        }
+                        .container {
+                            text-align: center;
+                            background: white;
+                            padding: 40px 60px;
+                            border-radius: 10px;
+                            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+                            max-width: 400px;
+                        }
+                        h1 {
+                            font-size: 72px;
+                            margin: 0;
+                            color: #e63946;
+                        }
+                        h2 {
+                            margin-top: 10px;
+                            font-weight: 400;
+                            color: #555;
+                        }
+                        p {
+                            margin: 20px 0;
+                            font-size: 18px;
+                            color: #666;
+                        }
+                        a {
+                            text-decoration: none;
+                            background: #457b9d;
+                            color: white;
+                            padding: 12px 25px;
+                            border-radius: 6px;
+                            font-weight: 600;
+                            transition: background-color 0.3s ease;
+                            display: inline-block;
+                        }
+                        a:hover {
+                            background: #1d3557;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1>404</h1>
+                        <h2>Página não encontrada</h2>
+                        <p>A rota <strong>{$uri}</strong> não existe ou não está disponível.</p>
+                        <a href="/">Voltar para a página inicial</a>
+                    </div>
+                </body>
+            </html>
+        HTML;
     }
 }
 

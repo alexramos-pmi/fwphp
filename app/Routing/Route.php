@@ -139,6 +139,9 @@ class Route
         }
 
         http_response_code(404);
-        echo "404 - Rota não encontrada: {$uri}";
+
+        // echo "404 - Rota não encontrada: {$uri}";
+
+        render404($uri);
     }
 }

@@ -1,11 +1,18 @@
 <?php
 
-session_start();
+// CORS headers para todas as rotas
+header("Access-Control-Allow-Origin: *"); // sem "*" se usar cookies
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Credentials: true");
 
-// Cabeçalhos CORS no início do index.php ou middleware
-header('Access-Control-Allow-Origin: *'); // ou origem específica
-header('Access-Control-Allow-Headers: Content-Type');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+// Responder requisições OPTIONS antes de continuar
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
+session_start();
 
 if(!isset($_SESSION['_csrf_token']))
 {
