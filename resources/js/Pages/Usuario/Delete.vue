@@ -33,7 +33,7 @@ import { useStore } from 'vuex'
 
 import model from "@/Modules/model.js"
 import clear from "@/Modules/clear.js"
-import { navigateTo } from '@/navigation/navigateTo'
+import { Inertia } from '@inertiajs/inertia'
 
 //Instancia vuex
 const store = useStore()
@@ -54,7 +54,8 @@ function del(){
             value: false
         });
 
-        navigateTo(`${store.state.urlBase}/usuarios`)
+        //navigateTo(`${store.state.urlBase}/usuarios`)
+        Inertia.visit(`${store.state.urlBase}/usuarios`)
 
         message('success', response.data.success)
 

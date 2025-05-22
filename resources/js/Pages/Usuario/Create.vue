@@ -107,7 +107,7 @@ import { useStore } from 'vuex'
 import model from "@/Modules/model.js"
 import clear from "@/Modules/clear.js"
 import Label from "@/Components/Label.vue"
-import { navigateTo } from '@/navigation/navigateTo'
+import { Inertia } from '@inertiajs/inertia'
 
 //Instancia um vuex
 const store = useStore()
@@ -142,7 +142,8 @@ function save(){
 
             message('success', response.data.success)
 
-            navigateTo(`${store.state.urlBase}/usuarios`)
+            //navigateTo(`${store.state.urlBase}/usuarios`)
+            Inertia.visit(`${store.state.urlBase}/usuarios`)
 
         }).catch(error => {
 
@@ -167,7 +168,8 @@ function save(){
 
             message('success', response.data.success)
 
-            navigateTo(`${store.state.urlBase}/usuarios`)
+            //navigateTo(`${store.state.urlBase}/usuarios`)
+            Inertia.visit(`${store.state.urlBase}/usuarios`)
 
         }).catch(error => {
 

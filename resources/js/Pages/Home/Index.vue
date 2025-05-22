@@ -13,8 +13,13 @@
 
 <script setup>
 
+import { useStore } from 'vuex'
+
 import Layout from '@/Pages/Layout.vue'
 import { Inertia } from '@inertiajs/inertia'
+
+//Instancia um vuex
+const store = useStore()
 
 function userTo(){
 

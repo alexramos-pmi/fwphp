@@ -12,7 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'resources/js'),
-      '@scss': path.resolve(__dirname, 'resources/scss'),
+      '@scss': path.resolve(__dirname, 'resources/js/scss'),
     },
   },
   build: {
