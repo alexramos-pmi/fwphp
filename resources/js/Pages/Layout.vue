@@ -66,7 +66,7 @@
       <!-- Cabeçalho fixo -->
       <v-app-bar app style="padding: 0 10px;">
 
-        <v-toolbar-title>FW-PHP</v-toolbar-title>
+        <v-toolbar-title>{{ appName }}</v-toolbar-title>
 
         <!-- Ícones de notificação e usuário -->
         <v-btn icon>
@@ -111,6 +111,8 @@ import Message from '@/components/Message.vue'
 import session from 'js-cookie'
 import { Inertia } from '@inertiajs/inertia'
 import { Link } from '@inertiajs/inertia-vue3'
+
+const appName = document.title
 
 //Instancia vuex
 const store = useStore()

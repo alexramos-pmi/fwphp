@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\Options;
+use App\Models\Conn\Model;
 
 class Usuario extends Model
 {

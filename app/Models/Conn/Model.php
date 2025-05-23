@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Conn;
 
 use PDO;
 
@@ -29,7 +29,8 @@ abstract class Model
         $dbUsername = env("DB_USERNAME");
         $dbPassword = env("DB_PASSWORD");
 
-        if (self::$db === null) {
+        if(self::$db === null)
+        {
             self::$db = new PDO("{$dbConn}:host={$dbHost};dbname={$dbName}", "{$dbUsername}", "{$dbPassword}");
             self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
@@ -37,7 +38,8 @@ abstract class Model
 
     public static function getDB(): PDO
     {
-        if (self::$db === null) {
+        if(self::$db === null)
+        {
             self::initDB();
         }
 
@@ -65,8 +67,10 @@ abstract class Model
         $autoFillables = array_merge(['id', 'created_at', 'updated_at'], static::$fillable);
         $fillable = array_diff($autoFillables, static::$guarded);
 
-        foreach ($data as $key => $value) {
-            if (in_array($key, $fillable)) {
+        foreach($data as $key => $value)
+        {
+            if(in_array($key, $fillable))
+            {
                 $this->$key = $value; // Passa pelo __set()
             }
         }
@@ -80,17 +84,22 @@ abstract class Model
         $now = date('Y-m-d H:i:s');
         $this->isSaving = true;
 
-        if (isset($this->attributes['id']) && $this->exists) {
+        if(isset($this->attributes['id']) && $this->exists)
+        {
             $this->attributes['updated_at'] = $now;
 
             $columns = array_keys($this->attributes);
             $assignments = implode(', ', array_map(fn($col) => "$col = :$col", $columns));
 
             $sql = "UPDATE " . static::$table . " SET $assignments WHERE id = :id";
-        } else {
-            if (!isset($this->attributes['created_at'])) {
+        }
+        else
+        {
+            if(!isset($this->attributes['created_at']))
+            {
                 $this->attributes['created_at'] = $now;
             }
+
             $this->attributes['updated_at'] = $now;
 
             $columns = array_keys($this->attributes);
@@ -102,7 +111,8 @@ abstract class Model
         $stmt = static::getDB()->prepare($sql);
         $success = $stmt->execute($this->attributes);
 
-        if (!$this->exists && empty($this->attributes['id'])) {
+        if(!$this->exists && empty($this->attributes['id']))
+        {
             $this->attributes['id'] = static::getDB()->lastInsertId();
         }
 
@@ -111,11 +121,6 @@ abstract class Model
 
         return $success;
     }
-
-    // public static function find($id): ?static
-    // {
-    //     return static::where('id', $id)->first();
-    // }
 
     public static function find($id)
     {
@@ -127,7 +132,8 @@ abstract class Model
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($data) {
+        if($data)
+        {
             $model = new static($data);
             $model->exists = true; // ✅ ESSENCIAL para evitar INSERT indevido
             return $model;
@@ -140,15 +146,18 @@ abstract class Model
     {
         $method = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key))) . 'Attribute';
 
-        if (method_exists($this, $method)) {
+        if(method_exists($this, $method))
+        {
             return $this->$method();
         }
 
-        if (in_array($key, static::$appends) && method_exists($this, $key)) {
+        if(in_array($key, static::$appends) && method_exists($this, $key))
+        {
             return $this->$key();
         }
 
-        if (array_key_exists($key, $this->attributes)) {
+        if(array_key_exists($key, $this->attributes))
+        {
             return $this->attributes[$key];
         }
 
@@ -159,9 +168,12 @@ abstract class Model
     {
         $method = 'set' . ucfirst($key) . 'Attribute';
 
-        if (method_exists($this, $method)) {
+        if(method_exists($this, $method))
+        {
             $this->$method($value);
-        } else {
+        }
+        else
+        {
             $this->attributes[$key] = $value;
         }
     }
@@ -186,13 +198,16 @@ abstract class Model
     {
         $data = [];
 
-        foreach ($this->attributes as $key => $value) {
+        foreach($this->attributes as $key => $value)
+        {
             $method = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key))) . 'Attribute';
             $data[$key] = method_exists($this, $method) ? $this->$method() : $value;
         }
 
-        foreach (static::$appends as $append) {
-            if (method_exists($this, $append)) {
+        foreach(static::$appends as $append)
+        {
+            if(method_exists($this, $append))
+            {
                 $data[$append] = $this->$append();
             }
         }
@@ -200,38 +215,38 @@ abstract class Model
         return $data;
     }
 
-    public static function where(string $column, $value): \App\Models\Builder
+    public static function where(string $column, $value): Builder
     {
-        return (new \App\Models\Builder(new static()))->where($column, $value);
+        return (new Builder(new static()))->where($column, $value);
     }
 
-    public static function orderBy(string $column, string $direction = 'ASC'): \App\Models\Builder
+    public static function orderBy(string $column, string $direction = 'ASC'): Builder
     {
-        return (new \App\Models\Builder(new static()))->orderBy($column, $direction);
+        return (new Builder(new static()))->orderBy($column, $direction);
     }
 
-    public static function limit(int $limit): \App\Models\Builder
+    public static function limit(int $limit): Builder
     {
-        return (new \App\Models\Builder(new static()))->limit($limit);
+        return (new Builder(new static()))->limit($limit);
     }
 
-    public static function offset(int $offset): \App\Models\Builder
+    public static function offset(int $offset): Builder
     {
-        return (new \App\Models\Builder(new static()))->offset($offset);
+        return (new Builder(new static()))->offset($offset);
     }
 
     public static function count(): int
     {
-        return (new \App\Models\Builder(new static()))->count();
+        return (new Builder(new static()))->count();
     }
 
     public static function get(): array
     {
-        return (new \App\Models\Builder(new static()))->get();
+        return (new Builder(new static()))->get();
     }
 
     public function first(): ?static
     {
-        return (new \App\Models\Builder($this))->first();
+        return (new Builder($this))->first();
     }
 }

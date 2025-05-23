@@ -54,10 +54,7 @@ class UsuarioController
                 throw new Exception($validate->getErrors());
             }
 
-            if(!empty($request->input('password')))
-            {
-                $request->set('password', bcrypt($request->input('password')));
-            }
+            $request->set('password', bcrypt($request->input('password')));
 
             $usuario = Usuario::create($request->all());
             $nome = $usuario->name;
@@ -87,11 +84,6 @@ class UsuarioController
             $validate->max('email', 'E-mail', 100);
             $validate->require('level', 'Nível');
 
-            if(empty($request->input('password')))
-            {
-                $request->remove('password');
-            }
-
             if($validate->getErrors())
             {
                 throw new Exception($validate->getErrors());
@@ -100,6 +92,10 @@ class UsuarioController
             if(!empty($request->input('password')))
             {
                 $request->set('password', bcrypt($request->input('password')));
+            }
+            else
+            {
+                $request->remove('password');
             }
 
             $usuario = Usuario::find($id);

@@ -101,8 +101,6 @@ if(!function_exists('vite'))
 
         $tags = '';
 
-        //dd($manifest[$entry]);
-
         // CSS
         if(isset($manifest[$entry]['css']))
         {
