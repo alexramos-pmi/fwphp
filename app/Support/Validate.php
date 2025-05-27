@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Models\Model;
+use App\Models\Conn\Model;
 use DateTime;
 
 class Validate
