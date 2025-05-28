@@ -14,6 +14,7 @@ class Usuario extends Model
         'email',
         'password',
         'level',
+        'cover'
     ];
 
     protected static array $appends = ['level_name'];

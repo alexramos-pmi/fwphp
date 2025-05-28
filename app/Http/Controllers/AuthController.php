@@ -23,6 +23,8 @@ class AuthController
                 throw new Exception('Credenciais inválidas.');
             }
 
+            linkSimbolico();
+
             $user = [
                 'userid' => Auth::user()->id,
                 'username' => Auth::user()->name,

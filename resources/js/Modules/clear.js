@@ -31,7 +31,8 @@ export default {
                 email: '',
                 password: '',
                 level: '',
-                setor: ''
+                setor: '',
+                cover: ''
             }
         });
     },

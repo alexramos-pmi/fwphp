@@ -160,7 +160,7 @@ function user(item) {
       email: item.email,
       password: '',
       level: item.level,
-      setor: item.setor,
+      cover: item.cover,
     },
     mode: 'replace',
   })

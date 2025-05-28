@@ -35,7 +35,7 @@ export default createStore({
             email: '',
             password: '',
             level: '',
-            foto: null
+            cover: ''
         },
         messages: {
             success: '',

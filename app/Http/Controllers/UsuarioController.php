@@ -26,6 +26,7 @@ class UsuarioController
                     'name' => $usuario->name,
                     'email' => $usuario->email,
                     'level' => $usuario->level,
+                    'cover' => $usuario->cover,
                     'level_name' => $usuario->level_name
                 ];
             }
@@ -38,15 +39,6 @@ class UsuarioController
     {
         try
         {
-            $uploader = (new ImageUploader())
-            ->setFile($request->file('foto'))
-            ->setDimensions(472, 354);
-            $result = $uploader->upload();
-
-            //linkSimbolico();
-
-            dd($result['filename']);
-
             $validate = new Validate($request->all(), 0);
             $validate->setModel(new Usuario());
 
@@ -65,6 +57,17 @@ class UsuarioController
             }
 
             $request->set('password', bcrypt($request->input('password')));
+
+            if($request->file('file'))
+            {
+                $uploader = (new ImageUploader())
+                ->setFile($request->file('file'))
+                ->setDimensions(500, 500)
+                ->keepAspectRatio(true);
+
+                $result = $uploader->upload();
+                $request->set('cover', $result['filename']);
+            }
 
             $usuario = Usuario::create($request->all());
             $nome = $usuario->name;
@@ -107,8 +110,29 @@ class UsuarioController
             {
                 $request->remove('password');
             }
-
+            
+            //Consulta usuário
             $usuario = Usuario::find($id);
+
+            //Verifica se existe arquivo
+            if($request->file('file'))
+            {
+                $foto = env('APP_ROOT') . '/storage/images/' . $usuario->cover;
+
+                if(file_exists($foto))
+                {
+                    unlink($foto);
+                }
+
+                $uploader = (new ImageUploader())
+                ->setFile($request->file('file'))
+                ->setDimensions(500, 500)
+                ->keepAspectRatio(true);
+
+                $result = $uploader->upload();
+                $request->set('cover', $result['filename']);
+            }
+
             $nome = $usuario->name;
             $usuario->fill($request->all())->save();
 

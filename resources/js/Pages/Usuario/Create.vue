@@ -82,7 +82,7 @@
                                 <v-col cols="12">
                                     <v-file-input
                                         label="Foto"
-                                        v-model="store.state.user.foto"
+                                        v-model="file"
                                         prepend-inner-icon="mdi-camera"
                                         prepend-icon=""
                                         variant="outlined"
@@ -112,12 +112,16 @@
 
 <script setup>
 
+import { ref } from 'vue';
 import { useStore } from 'vuex'
 
 import model from "@/Modules/model.js"
 import clear from "@/Modules/clear.js"
 import Label from "@/Components/Label.vue"
 import { Inertia } from '@inertiajs/inertia'
+
+//Declara variáveis/constantes
+const file = ref(null)
 
 //Instancia um vuex
 const store = useStore()
@@ -138,7 +142,8 @@ function save(){
     formData.append('email', store.state.user.email)
     formData.append('password', store.state.user.password)
     formData.append('level', store.state.user.level)
-    formData.append('foto', store.state.user.foto)
+    formData.append('cover', store.state.user.cover)
+    formData.append('file', file.value)
 
     if(id <= 0){
 
