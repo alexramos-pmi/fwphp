@@ -130,4 +130,9 @@ class Request
 
         return false;
     }
+
+    public function file(string $key)
+    {
+        return $_FILES[$key] ?? null;
+    }
 }

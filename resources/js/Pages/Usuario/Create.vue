@@ -78,6 +78,16 @@
                                         </template>
                                     </v-autocomplete>
                                 </v-col>
+                                
+                                <v-col cols="12">
+                                    <v-file-input
+                                        label="Foto"
+                                        v-model="store.state.user.foto"
+                                        prepend-inner-icon="mdi-camera"
+                                        prepend-icon=""
+                                        variant="outlined"
+                                    ></v-file-input>
+                                </v-col>
                             </v-row>
 
                         </div>
@@ -128,6 +138,7 @@ function save(){
     formData.append('email', store.state.user.email)
     formData.append('password', store.state.user.password)
     formData.append('level', store.state.user.level)
+    formData.append('foto', store.state.user.foto)
 
     if(id <= 0){
 

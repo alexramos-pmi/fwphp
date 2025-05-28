@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\ImageUploader;
 use App\Http\Request;
 use App\Models\Usuario;
 use App\Foundation\Http;
@@ -37,6 +38,13 @@ class UsuarioController
     {
         try
         {
+            $uploader = (new ImageUploader())
+            ->setFile($request->file('foto'))
+            ->setDimensions(354, 472);
+            $result = $uploader->upload();
+
+            dd($result['filename']);
+
             $validate = new Validate($request->all(), 0);
             $validate->setModel(new Usuario());
 
