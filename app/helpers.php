@@ -198,6 +198,41 @@ if(!function_exists('logger'))
     }
 }
 
+if(!function_exists('linkSimbolico'))
+{
+    function linkSimbolico(): void
+    {
+        $target = __DIR__ . '/../storage/images'; // Caminho para a pasta de uploads
+        $link = __DIR__ . '/../public/images'; // Caminho para o link simbólico na pasta public
+
+        if(!file_exists($link))
+        {
+            symlink($target, $link);
+        }
+    }
+}
+
+if(!function_exists('url'))
+{
+    function url(string $path): string
+    {
+        // Obtém o esquema (http ou https)
+        $scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+
+        // Obtém o nome do host (por exemplo, 'seudominio.com')
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+        // Obtém o caminho do script (por exemplo, '/index.php')
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+
+        // Remove o nome do script para obter o caminho base
+        $basePath = rtrim(str_replace(basename($scriptName), '', $scriptName), '/');
+
+        // Constrói a URL completa
+        return "{$scheme}://{$host}{$basePath}/{$path}";
+    }
+}
+
 if(!function_exists('render404'))
 {
     function render404(string $uri): void

@@ -40,8 +40,10 @@ class UsuarioController
         {
             $uploader = (new ImageUploader())
             ->setFile($request->file('foto'))
-            ->setDimensions(354, 472);
+            ->setDimensions(472, 354);
             $result = $uploader->upload();
+
+            //linkSimbolico();
 
             dd($result['filename']);
 
