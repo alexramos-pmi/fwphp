@@ -24,7 +24,7 @@ class MakeControllerCommand extends Command
         $name = $input->getArgument('name');
 
         $className = ucfirst($name);
-        $filePath = __DIR__ . "/../Controllers/{$className}.php";
+        $filePath = __DIR__ . "/../Http/Controllers/{$className}.php";
 
         if (file_exists($filePath)) {
             $output->writeln("<error>O controller '{$className}' já existe.</error>");

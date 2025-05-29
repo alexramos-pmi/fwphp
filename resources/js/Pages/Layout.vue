@@ -79,7 +79,7 @@
 
         <v-btn icon>
           <v-avatar>
-            <img :src="`${store.state.urlBase}/images/bccfc93cd05cc999b5de1fc3cbb5209ec21617f5.jpg`" alt="User Avatar" style="width: 40px; height: 40px;">
+            <img :src="`${store.state.urlBase}/images/${session.get('_usercover')}`" alt="User Avatar" style="width: 40px; height: 40px;">
           </v-avatar>
         </v-btn>
 
@@ -161,6 +161,7 @@ function logout(){
     session.remove('_username')
     session.remove('_useremail')
     session.remove('_userlevel')
+    session.remove('_usercover')
     session.remove('_userlevelname')
 
     //Gera uma mensagem na tela

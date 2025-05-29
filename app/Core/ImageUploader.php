@@ -83,6 +83,18 @@ class ImageUploader
         return $this;
     }
 
+    public function unlink(string $cover): self
+    {
+        $foto = env('APP_ENV') === 'local' ? env('APP_URL') . '/public/storage/images/' . $cover : env('APP_URL') . '/storage/images/' . $cover;
+
+        if(file_exists($foto))
+        {
+            unlink($foto);
+        }
+
+        return $this;
+    }
+
     public function upload(): array
     {
         if (!$this->file || $this->file['error'] !== UPLOAD_ERR_OK) {

@@ -31,7 +31,7 @@
                 <v-table>
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Foto</th>
                             <th>Nome</th>
                             <th>Email</th>
                             <th>Nível</th>
@@ -43,7 +43,9 @@
                             v-for="(item, index) in filteredItems" :key="index"
                             :class="{ 'even-row': index % 2 === 0, 'odd-row': index % 2 !== 0 }"
                         >
-                            <td data-cell="#">{{ item.id }}</td>
+                            <td data-cell="Foto">
+                              <img :src="item.cover ? item.path : `${store.state.urlBase}/img/image-default.jpg`" alt="" style="width: 40px; border-radius: 50%; margin-top: 7px;">
+                            </td>
                             <td data-cell="Nome">{{ item.name }}</td>
                             <td data-cell="Email">{{ item.email }}</td>
                             <td data-cell="Nível">{{ item.level_name }}</td>

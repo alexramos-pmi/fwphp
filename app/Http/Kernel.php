@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Http;
 
@@ -16,23 +16,34 @@ class Kernel
         // outros middlewares nomeados...
     ];
 
-    public static function handle(Request $request, array $routeMiddlewares = []): void
+    public static function handle(Request $request, array $routeMiddlewareKeys = []): void
     {
-        // globais
-        foreach(self::$globalMiddlewares as $middlewareClass)
-        {
-            $middlewareClass::handle($request);
-        }
+        // Monta lista completa de middlewares a serem executados
+        $middlewareClasses = array_merge(
+            self::$globalMiddlewares,
+            array_map(fn($key) => self::$routeMiddlewares[$key] ?? null, $routeMiddlewareKeys)
+        );
 
-        // específicos de rota
-        foreach($routeMiddlewares as $middlewareKey)
-        {
-            $middlewareClass = self::$routeMiddlewares[$middlewareKey] ?? null;
+        $middlewareClasses = array_filter($middlewareClasses);
 
-            if($middlewareClass && method_exists($middlewareClass, 'handle'))
-            {
-                $middlewareClass::handle($request);
-            }
-        }
+        // Função final (última da cadeia): Controller
+        $core = function ($req) {
+            // Aqui você pode chamar o Controller real
+            // Ex: Router::dispatch($req);
+            return null;
+        };
+
+        // Envelopa cada middleware ao redor do próximo
+        $pipeline = array_reduce(
+            array_reverse($middlewareClasses),
+            function ($next, $middlewareClass) {
+                return function ($req) use ($middlewareClass, $next) {
+                    return $middlewareClass::handle($req, $next);
+                };
+            },
+            $core
+        );
+
+        $pipeline($request);
     }
 }

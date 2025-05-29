@@ -119,6 +119,7 @@ function login(){
         session.set('_username', response.data.user.username)
         session.set('_useremail', response.data.user.useremail)
         session.set('_userlevel', response.data.user.userlevel)
+        session.set('_usercover', response.data.user.usercover)
         session.set('_userlevelname', response.data.user.userlevelname)
 
         Inertia.visit(`${store.state.urlBase}`)

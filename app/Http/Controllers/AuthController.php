@@ -30,6 +30,7 @@ class AuthController
                 'username' => Auth::user()->name,
                 'useremail' => Auth::user()->email,
                 'userlevel' => Auth::user()->level,
+                'usercover' => Auth::user()->cover,
                 'userlevelname' => Auth::user()->level_name
             ];
 

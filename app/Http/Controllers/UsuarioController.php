@@ -27,10 +27,13 @@ class UsuarioController
                     'email' => $usuario->email,
                     'level' => $usuario->level,
                     'cover' => $usuario->cover,
+                    'path' => url('images/' . $usuario->cover),
                     'level_name' => $usuario->level_name
                 ];
             }
         }
+
+        //dd($list);
 
         inertia('Usuario/Index', compact('list'));
     }
@@ -117,20 +120,22 @@ class UsuarioController
             //Verifica se existe arquivo
             if($request->file('file'))
             {
-                $foto = env('APP_ROOT') . '/storage/images/' . $usuario->cover;
-
-                if(file_exists($foto))
-                {
-                    unlink($foto);
-                }
-
                 $uploader = (new ImageUploader())
                 ->setFile($request->file('file'))
                 ->setDimensions(500, 500)
-                ->keepAspectRatio(true);
+                ->keepAspectRatio(true) //Corta e ajusta a imagem
+                ->unlink($usuario->cover ? $usuario->cover : 'cover'); //Exclui a foto antiga, caso exista
 
                 $result = $uploader->upload();
                 $request->set('cover', $result['filename']);
+            }
+            elseif(!$request->file('file') && $usuario->cover)
+            {
+                $request->set('cover', $usuario->cover);
+            }
+            else 
+            {
+                $request->set('cover', null);
             }
 
             $nome = $usuario->name;

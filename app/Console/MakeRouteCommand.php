@@ -14,15 +14,17 @@ class MakeRouteCommand extends Command
         $this
             ->setName('make:route')
             ->setDescription('Adiciona uma nova rota ao sistema')
+            ->addArgument('method', InputArgument::REQUIRED, 'Método HTTP (get, post, put, delete...)')
             ->addArgument('uri', InputArgument::REQUIRED, 'URI da rota (ex: /usuarios)')
             ->addArgument('controller', InputArgument::REQUIRED, 'Controller@metodo (ex: UsuarioController@index)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $method = strtolower($input->getArgument('method'));
         $uri = $input->getArgument('uri');
         $controllerAction = $input->getArgument('controller');
-        $routeLine = "Route::get('{$uri}', '{$controllerAction}');";
+        $routeLine = "Route::{$method}('{$uri}', '{$controllerAction}');";
 
         $routesPath = __DIR__ . '/../../routes';
         $filePath = $routesPath . '/web.php';

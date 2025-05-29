@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Http\Middleware;
 
@@ -11,27 +11,24 @@ class VerifyCsrfToken
         '/webhook/github',
     ];
 
-    public static function handle(Request $request): void
+    public static function handle(Request $request, \Closure $next)
     {
-        if($request->method() === 'GET') return;
+        if ($request->method() === 'GET') return $next($request);
 
         $uri = parse_url($request->server['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
-        // Ignora se a rota estiver na lista de exceções
-        foreach(self::$except as $exceptUri)
-        {
-            if(preg_match('#^' . preg_quote($exceptUri, '#') . '$#', $uri))
-            {
-                return;
+        foreach (self::$except as $exceptUri) {
+            if (preg_match('#^' . preg_quote($exceptUri, '#') . '$#', $uri)) {
+                return $next($request);
             }
         }
 
-        if(!$request->validateCsrfToken())
-        {
+        if (!$request->validateCsrfToken()) {
             http_response_code(419);
             echo 'Token CSRF inválido ou ausente.';
-
             exit;
         }
+
+        return $next($request);
     }
 }
