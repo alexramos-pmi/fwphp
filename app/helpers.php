@@ -233,6 +233,24 @@ if(!function_exists('url'))
     }
 }
 
+if(!function_exists('public_path'))
+{
+    /**
+     * Retorna o caminho absoluto para a pasta public do projeto,
+     * relativo ao diretório onde este helper está localizado.
+     *
+     * @param string $path Caminho relativo dentro da pasta public.
+     * @return string Caminho absoluto no sistema de arquivos.
+     */
+    function public_path(string $path = ''): string
+    {
+        // Ajuste o caminho conforme a estrutura do seu projeto
+        $base = realpath(__DIR__ . '/../storage');
+
+        return $path ? $base . '/' . ltrim($path, '/') : $base;
+    }
+}
+
 if(!function_exists('render404'))
 {
     function render404(string $uri): void

@@ -4,7 +4,7 @@ namespace App\Http;
 
 use App\Http\Request;
 
-class Kernel
+class Kernel1
 {
     protected static array $globalMiddlewares = [
         \App\Http\Middleware\Cors::class,
@@ -16,7 +16,7 @@ class Kernel
         // outros middlewares nomeados...
     ];
 
-    public static function handle(Request $request, callable $controllerCallback, array $routeMiddlewareKeys = [])
+    public static function handle(Request $request, array $routeMiddlewareKeys = []): void
     {
         // Monta lista completa de middlewares a serem executados
         $middlewareClasses = array_merge(
@@ -26,20 +26,24 @@ class Kernel
 
         $middlewareClasses = array_filter($middlewareClasses);
 
-        // Função final (última da cadeia): o Controller real
-        $core = fn($req) => $controllerCallback($req);
+        // Função final (última da cadeia): Controller
+        $core = function ($req) {
+            // Aqui você pode chamar o Controller real
+            // Ex: Router::dispatch($req);
+            return null;
+        };
 
         // Envelopa cada middleware ao redor do próximo
         $pipeline = array_reduce(
             array_reverse($middlewareClasses),
-            function($next, $middlewareClass)
-            {
-                return fn($req) => $middlewareClass::handle($req, $next);
+            function ($next, $middlewareClass) {
+                return function ($req) use ($middlewareClass, $next) {
+                    return $middlewareClass::handle($req, $next);
+                };
             },
             $core
         );
 
-        // Executa toda a cadeia e retorna a resposta final
-        return $pipeline($request);
+        $pipeline($request);
     }
 }

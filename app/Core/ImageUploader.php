@@ -85,11 +85,11 @@ class ImageUploader
 
     public function unlink(string $cover): self
     {
-        $foto = env('APP_ENV') === 'local' ? env('APP_URL') . '/public/storage/images/' . $cover : env('APP_URL') . '/storage/images/' . $cover;
+        $image = public_path("images/{$cover}");
 
-        if(file_exists($foto))
+        if(file_exists($image))
         {
-            unlink($foto);
+            unlink($image);
         }
 
         return $this;

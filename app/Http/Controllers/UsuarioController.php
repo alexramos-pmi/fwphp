@@ -124,7 +124,7 @@ class UsuarioController
                 ->setFile($request->file('file'))
                 ->setDimensions(500, 500)
                 ->keepAspectRatio(true) //Corta e ajusta a imagem
-                ->unlink($usuario->cover ? $usuario->cover : 'cover'); //Exclui a foto antiga, caso exista
+                ->unlink($usuario->cover); //Exclui a foto antiga, caso exista
 
                 $result = $uploader->upload();
                 $request->set('cover', $result['filename']);
@@ -133,11 +133,12 @@ class UsuarioController
             {
                 $request->set('cover', $usuario->cover);
             }
-            else 
+            else
             {
                 $request->set('cover', null);
             }
 
+            //Captura o nome do usuário
             $nome = $usuario->name;
             $usuario->fill($request->all())->save();
 
