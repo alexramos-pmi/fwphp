@@ -33,8 +33,6 @@ class UsuarioController
             }
         }
 
-        //dd($list);
-
         inertia('Usuario/Index', compact('list'));
     }
 

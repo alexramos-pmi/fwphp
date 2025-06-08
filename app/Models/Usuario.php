@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use App\Support\Options;
-use App\Models\Conn\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Usuario extends Model
 {
-    protected static string $table = 'users';
-
-    protected static array $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',
@@ -17,10 +15,10 @@ class Usuario extends Model
         'cover'
     ];
 
-    protected static array $appends = ['level_name'];
+    protected $appends = ['level_name'];
 
-    public function level_name()
+    public function getLevelNameAttribute()
     {
-        return Options::Levels()[$this->attributes['level']] ?? null;
+        return Options::Levels()[$this->level] ?? null;
     }
 }

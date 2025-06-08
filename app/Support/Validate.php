@@ -2,8 +2,8 @@
 
 namespace App\Support;
 
-use App\Models\Conn\Model;
 use DateTime;
+use Illuminate\Database\Eloquent\Model;
 
 class Validate
 {
