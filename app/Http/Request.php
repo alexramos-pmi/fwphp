@@ -115,19 +115,30 @@ class Request
     {
         $tokenSession = $_SESSION['_csrf_token'] ?? '';
 
-        // 1. Token vindo por POST (formulário HTML)
+        // 1. Token vindo por POST
         if (isset($this->post['_token']) && hash_equals($tokenSession, $this->post['_token'])) {
             return true;
         }
-
-        // 2. Token vindo pelo cabeçalho HTTP (usado pelo Axios/Vue)
-        $headers = getallheaders();
-        $tokenHeader = $headers['X-CSRF-TOKEN'] ?? $headers['x-csrf-token'] ?? null;
-
+    
+        // 2. Token vindo por cabeçalho (header)
+        $tokenHeader = null;
+    
+        // Tenta com getallheaders()
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+            $tokenHeader = $headers['X-CSRF-TOKEN'] ?? $headers['x-csrf-token'] ?? null;
+        }
+    
+        // Fallback manual para ambientes que não suportam getallheaders()
+        if (!$tokenHeader && isset($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+            $tokenHeader = $_SERVER['HTTP_X_CSRF_TOKEN'];
+        }
+    
+        // Valida
         if ($tokenHeader && hash_equals($tokenSession, $tokenHeader)) {
             return true;
         }
-
+    
         return false;
     }
 

@@ -1,18 +1,39 @@
 <?php
 
+//Inclue o autoload
+require_once __DIR__ . '/../vendor/autoload.php';
+
+//Inclue a configuração/helper do arquivo .env
+loadEnv();
+
+//Configura o tempo de sessão
+$config = require __DIR__ . '/../config/session.php';
+
+$lifetime = $config['lifetime'] * 60;
+ini_set('session.gc_maxlifetime', $lifetime);
+ini_set('session.cookie_lifetime', $lifetime);
+
+//Inicia a sessão
 session_start();
 
+//Verifica o csrf token
 if(!isset($_SESSION['_csrf_token']))
 {
     $_SESSION['_csrf_token'] = bin2hex(random_bytes(32));
 }
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
-loadEnv();
-
+//Inclue os dados de conexão para o Eloquent ORM
 require_once __DIR__ . '/../bootstrap/app.php';
 
+//Inclue o timezone
+$appConfig = require __DIR__ . '/../config/app.php';
+
+if(!empty($appConfig['timezone']))
+{
+    date_default_timezone_set($appConfig['timezone']);
+}
+
+//Inclue as rotas
 use App\Routing\Route;
 
 //Display errors
