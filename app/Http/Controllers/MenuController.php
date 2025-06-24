@@ -23,11 +23,6 @@ class MenuController
                     ['title' => 'Usuário', 'icon' => 'mdi-circle-medium', 'route' => 'usuarios'],
                 ],
             ],
-            // [
-            //     'title' => 'Sair',
-            //     'icon' => 'mdi-exit-to-app',
-            //     'route' => 'logout'
-            // ],
         ];
 
         return response()->json(['menu' => $menu], Http::OK);

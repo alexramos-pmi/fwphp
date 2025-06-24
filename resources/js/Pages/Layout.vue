@@ -66,6 +66,7 @@
       <!-- Cabeçalho fixo -->
       <v-app-bar app style="padding: 0 10px;">
 
+        <img :src="`${store.state.urlBase}/img/logo.png`" style="width: 50px; cursor: pointer;" @click="goHome" alt="">
         <v-toolbar-title>{{ appName }}</v-toolbar-title>
 
         <!-- Ícones de notificação e usuário -->
@@ -79,7 +80,7 @@
 
         <v-btn icon>
           <v-avatar>
-            <img :src="`${store.state.urlBase}/images/${session.get('_usercover')}`" alt="User Avatar" style="width: 40px; height: 40px;">
+            <img :src="session.get('_usercover') !== 'null' ? `${store.state.urlBase}/images/${session.get('_usercover')}` : `${store.state.urlBase}/img/image-default.jpg`" alt="User Avatar" style="width: 40px; height: 40px;">
           </v-avatar>
         </v-btn>
 
@@ -121,6 +122,11 @@ loading()
 openMenu()
 
 //Funções/Métodos
+
+function goHome(){
+
+  Inertia.visit(`${store.state.urlBase}`)
+}
 
 function loading(){
 
@@ -176,6 +182,7 @@ function logout(){
     })
 
     window.location.href = `${store.state.urlBase}/login`
+    //Inertia.visit(`${store.state.urlBase}/login`)
   })
 }
 

@@ -7,6 +7,7 @@ export default createStore({
         modal: false,
         modalDel: false,
         modalPdf: false,
+        modalAnexo: false,
         drawer: false,
         alternativas: [
             {id: 1, name: 'Sim'},
@@ -14,12 +15,10 @@ export default createStore({
         ],
         levels: [
             {id: 1, name: 'Operador'},
-            {id: 2, name: 'Admin'}
+            {id: 2, name: 'Local'},
+            {id: 3, name: 'Regional'},
+            {id: 4, name: 'Admin'}
         ],
-        auth: {
-            admin: [2],
-            operador: [1,2]
-        },
         updatePage: false,
         login: {
             email: 'alexramos.pmi@gmail.com',
@@ -34,6 +33,9 @@ export default createStore({
             name: '',
             email: '',
             password: '',
+            er: '',
+            el: '',
+            eta: '',
             level: '',
             cover: ''
         },

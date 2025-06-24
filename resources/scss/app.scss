@@ -122,13 +122,14 @@ table{
         td:last-child{
 
             text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
 
             span{
                 cursor: pointer;
+                margin-right: 10px;
+            }
+
+            span:last-child{
+                margin-right: 0;
             }
         }
     }

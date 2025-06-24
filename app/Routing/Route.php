@@ -64,7 +64,6 @@ class Route
         if(env('APP_ENV') !== 'production')
         {
             $uri = parse_url($requestUri, PHP_URL_PATH);
-
             $scriptName = dirname($_SERVER['SCRIPT_NAME']);
 
             if($scriptName !== '/' && str_starts_with($uri, $scriptName))
@@ -74,63 +73,80 @@ class Route
             }
         }
 
-        if ($method === 'POST' && isset($_POST['_method'])) {
+        if($method === 'POST' && isset($_POST['_method']))
+        {
             $method = strtoupper($_POST['_method']);
         }
 
-        foreach (self::$routes[$method] ?? [] as $route) {
+        foreach(self::$routes[$method] ?? [] as $route)
+        {
             $routeUri = $route['uri'];
 
-            $pattern = preg_replace_callback('#\{([\w]+)\}#', function ($matches) {
+            $pattern = preg_replace_callback('#\{([\w]+)\}#', function($matches)
+            {
                 return '(?P<' . $matches[1] . '>[a-zA-Z0-9_-]+)';
             }, $routeUri);
 
             $pattern = '#^' . rtrim($pattern, '/') . '$#';
 
-            if (preg_match($pattern, $uri, $matches)) {
+            if(preg_match($pattern, $uri, $matches))
+            {
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
 
                 [$controllerName, $methodName] = explode('@', $route['action']);
                 $controllerClass = "App\\Http\\Controllers\\$controllerName";
 
-                if (!class_exists($controllerClass)) {
+                if(!class_exists($controllerClass))
+                {
                     http_response_code(500);
                     echo "Erro: Controller {$controllerClass} não encontrado.";
+
                     return;
                 }
 
                 $controller = new $controllerClass();
 
-                if (!method_exists($controller, $methodName)) {
+                if(!method_exists($controller, $methodName))
+                {
                     http_response_code(500);
                     echo "Erro: Método {$methodName} não existe no controller {$controllerClass}.";
+
                     return;
                 }
 
                 $request = new Request();
 
-                // Aplica os middlewares globais e de rota
-                $middlewares = $route['middleware'] ?? [];
-                Kernel::handle($request, $middlewares);
-
                 $reflection = new \ReflectionMethod($controller, $methodName);
                 $args = [];
 
-                foreach ($reflection->getParameters() as $param) {
+                foreach($reflection->getParameters() as $param)
+                {
                     $type = $param->getType();
 
-                    if ($type && $type->getName() === Request::class) {
+                    if($type && $type->getName() === Request::class)
+                    {
                         $args[] = $request;
-                    } else {
+                    }
+                    else
+                    {
                         $args[] = array_shift($params);
                     }
                 }
 
-                $response = $reflection->invokeArgs($controller, $args);
+                // Agora o Kernel executa o controller e retorna a resposta
+                $response = \App\Http\Kernel::handle(
+                    $request,
+                    fn($req) => $reflection->invokeArgs($controller, $args),
+                    $route['middleware'] ?? []
+                );
 
-                if ($response instanceof \App\Foundation\Response) {
+                // Envia a resposta
+                if($response instanceof \App\Foundation\Response)
+                {
                     $response->send();
-                } else {
+                }
+                else
+                {
                     echo $response;
                 }
 
@@ -139,9 +155,6 @@ class Route
         }
 
         http_response_code(404);
-
-        // echo "404 - Rota não encontrada: {$uri}";
-
         render404($uri);
     }
 }

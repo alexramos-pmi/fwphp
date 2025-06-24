@@ -19,27 +19,51 @@ class MakeModelCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $name = ucfirst($input->getArgument('name'));
-        $filePath = __DIR__ . "/../Models/{$name}.php";
+        $name = $input->getArgument('name');
 
+        // Quebra o caminho por "/" ou "\"
+        $pathParts = explode('/', str_replace('\\', '/', $name));
+        $className = ucfirst(array_pop($pathParts));
+        $namespacePath = implode('\\', array_map('ucfirst', $pathParts));
+        $directoryPath = implode(DIRECTORY_SEPARATOR, array_map('ucfirst', $pathParts));
+
+        $baseDir = __DIR__ . '/../Models';
+        $fullDir = $baseDir . ($directoryPath ? DIRECTORY_SEPARATOR . $directoryPath : '');
+        $filePath = $fullDir . DIRECTORY_SEPARATOR . $className . '.php';
+
+        // Cria os diretórios, se necessário
+        if (!is_dir($fullDir)) {
+            mkdir($fullDir, 0777, true);
+        }
+
+        // Verifica se o model já existe
         if (file_exists($filePath)) {
-            $output->writeln("<error>O model '{$name}' já existe.</error>");
+            $output->writeln("<error>O model '{$className}' já existe em '{$fullDir}'.</error>");
             return Command::FAILURE;
         }
 
+        // Define o namespace correto
+        $namespace = 'App\\Models' . ($namespacePath ? '\\' . $namespacePath : '');
+
+        // Conteúdo do arquivo
         $content = <<<PHP
-<?php
+        <?php
 
-namespace App\Models;
+        namespace {$namespace};
 
-class {$name}
-{
-    // Adicione atributos e métodos aqui
-}
-PHP;
+        class {$className}
+        {
+            // Adicione atributos e métodos aqui
+        }
+        PHP;
 
+        // Remove espaços antes do <?php
+        $content = ltrim($content);
+
+        // Salva o arquivo
         file_put_contents($filePath, $content);
-        $output->writeln("<info>Model {$name} criado com sucesso.</info>");
+
+        $output->writeln("<info>Model {$className} criado com sucesso em {$filePath}.</info>");
 
         return Command::SUCCESS;
     }

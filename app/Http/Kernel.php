@@ -16,7 +16,7 @@ class Kernel
         // outros middlewares nomeados...
     ];
 
-    public static function handle(Request $request, array $routeMiddlewareKeys = []): void
+    public static function handle(Request $request, callable $controllerCallback, array $routeMiddlewareKeys = [])
     {
         // Monta lista completa de middlewares a serem executados
         $middlewareClasses = array_merge(
@@ -26,24 +26,20 @@ class Kernel
 
         $middlewareClasses = array_filter($middlewareClasses);
 
-        // Função final (última da cadeia): Controller
-        $core = function ($req) {
-            // Aqui você pode chamar o Controller real
-            // Ex: Router::dispatch($req);
-            return null;
-        };
+        // Função final (última da cadeia): o Controller real
+        $core = fn($req) => $controllerCallback($req);
 
         // Envelopa cada middleware ao redor do próximo
         $pipeline = array_reduce(
             array_reverse($middlewareClasses),
-            function ($next, $middlewareClass) {
-                return function ($req) use ($middlewareClass, $next) {
-                    return $middlewareClass::handle($req, $next);
-                };
+            function($next, $middlewareClass)
+            {
+                return fn($req) => $middlewareClass::handle($req, $next);
             },
             $core
         );
 
-        $pipeline($request);
+        // Executa toda a cadeia e retorna a resposta final
+        return $pipeline($request);
     }
 }

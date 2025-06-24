@@ -2,8 +2,8 @@
 
 namespace App\Support;
 
-use App\Models\Conn\Model;
 use DateTime;
+use Illuminate\Database\Eloquent\Model;
 
 class Validate
 {
@@ -63,7 +63,7 @@ class Validate
     {
         $d = DateTime::createFromFormat('d/m/Y', $this->data[$campo]);
 
-        if(!$d || $d->format('d/m/Y') !== $this->data[$campo])
+        if(!$d)
         {
             $this->errors[$campo] = "O campo [ {$label} ] não é um tipo data";
         }

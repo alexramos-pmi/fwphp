@@ -23,30 +23,52 @@ class MakeControllerCommand extends Command
     {
         $name = $input->getArgument('name');
 
-        $className = ucfirst($name);
-        $filePath = __DIR__ . "/../Http/Controllers/{$className}.php";
+        // Converte caminhos do tipo Relatorios/RelBoletimController
+        $pathParts = explode('/', str_replace('\\', '/', $name));
+        $className = array_pop($pathParts); // Pega o nome da classe
+        $namespacePath = implode('\\', $pathParts); // Para o namespace
+        $directoryPath = implode(DIRECTORY_SEPARATOR, $pathParts); // Para o sistema de arquivos
 
+        $baseDir = __DIR__ . '/../Http/Controllers';
+        $fullDir = $baseDir . ($directoryPath ? DIRECTORY_SEPARATOR . $directoryPath : '');
+        $filePath = $fullDir . DIRECTORY_SEPARATOR . $className . '.php';
+
+        // Cria diretórios se necessário
+        if (!is_dir($fullDir)) {
+            mkdir($fullDir, 0777, true);
+        }
+
+        // Verifica existência
         if (file_exists($filePath)) {
-            $output->writeln("<error>O controller '{$className}' já existe.</error>");
+            $output->writeln("<error>O controller '{$className}' já existe em '{$fullDir}'.</error>");
             return Command::FAILURE;
         }
 
+        // Namespace final
+        $namespace = 'App\\Http\\Controllers' . ($namespacePath ? '\\' . $namespacePath : '');
+
+        // Criação do conteúdo, com ltrim para garantir que <?php esteja no topo
         $content = <<<PHP
-<?php
+        <?php
 
-namespace App\Http\Controllers;
+        namespace {$namespace};
 
-class {$className}
-{
-    public function index()
-    {
-        echo "Olá do controller {$className}!";
-    }
-}
-PHP;
+        class {$className}
+        {
+            public function index()
+            {
+                echo "Olá do controller {$className}!";
+            }
+        }
+        PHP;
 
+        // Remove qualquer espaço ou linha antes do <?php
+        $content = ltrim($content);
+
+        // Escreve no arquivo com codificação limpa
         file_put_contents($filePath, $content);
-        $output->writeln("<info>Controller {$className} criado com sucesso.</info>");
+
+        $output->writeln("<info>Controller {$className} criado com sucesso em {$filePath}.</info>");
 
         return Command::SUCCESS;
     }

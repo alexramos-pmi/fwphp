@@ -2,7 +2,7 @@
     <v-container>
         <!-- Modal -->
         <v-dialog
-            v-model="$store.state.modalDel" max-width="500px"
+            v-model="store.state.modalDel" max-width="500px"
             persistent
         >
 
@@ -12,7 +12,7 @@
 
                 <v-card-text>
 
-                    <p class="p-body">Tem certeza que deseja excluir <b>{{ $store.state.user.name }}</b>?</p>
+                    <p class="p-body">Tem certeza que deseja excluir <b>{{ store.state.user.name }}</b>?</p>
 
                     <div class="modal-footer justify-content-end" style="display: flex; gap: 15px;">
                         <v-btn color="grey" text @click="close">Não</v-btn>
@@ -53,8 +53,7 @@ function del(){
             objectName: 'loading',
             value: false
         });
-
-        //navigateTo(`${store.state.urlBase}/usuarios`)
+        
         Inertia.visit(`${store.state.urlBase}/usuarios`)
 
         message('success', response.data.success)

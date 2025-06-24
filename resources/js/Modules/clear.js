@@ -31,9 +31,12 @@ export default {
                 email: '',
                 password: '',
                 level: '',
+                er: '',
+                el: '',
+                eta: '',
                 setor: '',
                 cover: ''
             }
         });
-    },
+    }
 }

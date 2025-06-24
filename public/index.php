@@ -9,9 +9,11 @@ if(!isset($_SESSION['_csrf_token']))
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Routing\Route;
-
 loadEnv();
+
+require_once __DIR__ . '/../bootstrap/app.php';
+
+use App\Routing\Route;
 
 //Display errors
 if(env('APP_ENV') === 'production')
