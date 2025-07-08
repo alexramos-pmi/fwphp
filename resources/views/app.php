@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+=======
+    <link rel="icon" type="image/png" href="<?= env('APP_URL'). '/public/img/logo.png'; ?>"/>
+>>>>>>> 5c7bf29705850666a4329fa9e091dfcf25d4e5f5
     <title><?= htmlspecialchars(env('APP_NAME') ?? 'Meu Framework') ?></title>
 
     <meta name="csrf-token" content='<?= csrf(true); ?>'>

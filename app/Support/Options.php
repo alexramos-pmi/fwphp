@@ -8,7 +8,9 @@ class Options
     {
         return [
             1 => 'Operador',
-            2 => 'Admin'
+            2 => 'Local',
+            3 => 'Regional',
+            4 => 'Admin',
         ];
     }
 
@@ -46,52 +48,12 @@ class Options
         ];
     }
 
-    public static function eventoTipos()
-    {
-        return [
-            1 => ['nome' => 'Letivo', 'cor' => '#87CEEB', 'prioridade' => 1, 'excluir_fim_de_semana' => 1],
-            2 => ['nome' => 'Sábado Letivo', 'cor' => '#CD5C5C', 'prioridade' => 1, 'excluir_fim_de_semana' => 0],
-            3 => ['nome' => 'Semana Pedagógica', 'cor' => '#32CD32', 'prioridade' => 2, 'excluir_fim_de_semana' => 0],
-            4 => ['nome' => 'Férias', 'cor' => '#ffc966', 'prioridade' => 2, 'excluir_fim_de_semana' => 0],
-            5 => ['nome' => 'Feriados', 'cor' => '#4B0082', 'prioridade' => 3, 'excluir_fim_de_semana' => 0],
-            6 => ['nome' => 'Encontro Com Gestores Escolares', 'cor' => '#00FF7F', 'prioridade' => 2, 'excluir_fim_de_semana' => 1],
-            7 => ['nome' => 'Planejamento nas Unidades Escolares', 'cor' => '#4169E1', 'prioridade' => 2, 'excluir_fim_de_semana' => 1],
-            8 => ['nome' => 'Início e Término do Ano Letivo', 'cor' => '#228B22', 'prioridade' => 0, 'excluir_fim_de_semana' => 1],
-            10 => ['nome' => 'Recesso de Carnaval', 'cor' => '#800080', 'prioridade' => 3, 'excluir_fim_de_semana' => 0],
-            11 => ['nome' => 'Recesso de Semana Santa', 'cor' => '#FF8C00', 'prioridade' => 3, 'excluir_fim_de_semana' => 0],
-            12 => ['nome' => 'Recesso Junino', 'cor' => '#708090', 'prioridade' => 3, 'excluir_fim_de_semana' => 0],
-            13 => ['nome' => 'Recuperação', 'cor' => '#FF8C00', 'prioridade' => 2, 'excluir_fim_de_semana' => 1],
-            14 => ['nome' => 'Conselho de Classe', 'cor' => '#800000', 'prioridade' => 2, 'excluir_fim_de_semana' => 1],
-            15 => ['nome' => 'Publicação do Resultado Final', 'cor' => '#778899', 'prioridade' => 2, 'excluir_fim_de_semana' => 1],
-            16 => ['nome' => 'Início das Unidades Letivas', 'cor' => '#999999', 'prioridade' => 0, 'excluir_fim_de_semana' => 1]
-        ];
-    }
-
     public static function situacao()
     {
         return [
             1 => 'Ativo(a)',
             2 => 'Inativo(a)'
         ];
-    }
-
-    public static function tipoDeAtendimento()
-    {
-        return [
-            1 => 'Escolarização',
-            2 => 'Atividade complementar',
-            3=> 'Atendimento Educacional Especializado (AEE)'
-        ];
-    }
-
-    public static function authAdmin()
-    {
-        return [2];
-    }
-
-    public static function authOperador()
-    {
-        return [1,2];
     }
 
     public static function estadosCivis()
@@ -174,11 +136,30 @@ class Options
     public static function amostras()
     {
         return [
-            1 => 'IN. NAT.',
-            2 => 'COAG.',
-            3 => 'DEC.',
-            4 => 'FILT.',
-            5 => 'CLOR.'
+            1 => 'ETA',
+            2 => 'IN. NAT.',
+            3 => 'COAG.',
+            4 => 'DEC.',
+            5 => 'FILT.',
+            6 => 'CLOR.'
+        ];
+    }
+
+    public static function meses()
+    {
+        return [
+            0 => ['id' => '01','abrev' => 'Jan', 'nome' => 'Janeiro'],
+            1 => ['id' => '02','abrev' => 'Fev', 'nome' => 'Fevereiro'],
+            2 => ['id' => '03','abrev' => 'Mar', 'nome' => 'Março'],
+            3 => ['id' => '04','abrev' => 'Abr', 'nome' => 'Abril'],
+            4 => ['id' => '05','abrev' => 'Mai', 'nome' => 'Maio'],
+            5 => ['id' => '06','abrev' => 'Jun', 'nome' => 'Junho'],
+            6 => ['id' => '07','abrev' => 'Jul', 'nome' => 'Julho'],
+            7 => ['id' => '08','abrev' => 'Ago', 'nome' => 'Agosto'],
+            8 => ['id' => '09','abrev' => 'Set', 'nome' => 'Setembro'],
+            9 => ['id' => '10','abrev' => 'Out', 'nome' => 'Outubro'],
+            10 => ['id' => '11','abrev' => 'Nov', 'nome' => 'Novembro'],
+            11 => ['id' => '12','abrev' => 'Dez', 'nome' => 'Dezembro']
         ];
     }
 }

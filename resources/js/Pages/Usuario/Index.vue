@@ -10,13 +10,14 @@
                     Usuário
                 </span>
 
-                <v-btn color="green" @click="createItem">
+                <v-btn color="green" @click="createItem" v-if="level > 1">
                     <v-icon>mdi-plus</v-icon> Usuário
                 </v-btn>
 
             </v-card-title>
 
             <v-card-text>
+
                 <!-- Campo de pesquisa -->
                 <v-text-field
                     v-model="search"
@@ -50,13 +51,13 @@
                             <td data-cell="Email">{{ item.email }}</td>
                             <td data-cell="Nível">{{ item.level_name }}</td>
                             <td data-cell="Ações">
-                                <span @click="editItem(item)" title="Editar">
-                                    <v-icon>mdi-file-edit-outline</v-icon>
-                                </span>
+                              <span @click="editItem(item)" title="Editar">
+                                  <v-icon>mdi-file-edit-outline</v-icon>
+                              </span>
 
-                                <span @click="delItem(item)" title="Excluir">
-                                    <v-icon>mdi-trash-can-outline</v-icon>
-                                </span>
+                              <span @click="delItem(item)" title="Excluir">
+                                  <v-icon>mdi-trash-can-outline</v-icon>
+                              </span>
                             </td>
                         </tr>
                     </tbody>
@@ -74,7 +75,13 @@
       </v-col>
     </v-row>
 
-    <Create />
+    <Create 
+      :ers="props.ers" 
+      :els="props.els" 
+      :etas="props.etas"  
+      :level
+    />
+    
     <Delete />
 
 </Layout>
@@ -85,6 +92,8 @@
 
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
+import { Inertia } from '@inertiajs/inertia'
+import session from 'js-cookie'
 
 import Layout from "@/pages/Layout.vue"
 import Create from "@/pages/Usuario/Create.vue"
@@ -92,7 +101,7 @@ import Delete from "@/pages/Usuario/Delete.vue"
 
 //Define as propriedades vindas do php
 const props = defineProps({
-  list: {type: Array, required: true}
+  list: {type: Array, required: true},
 })
 
 //Instancia um vuex
@@ -103,6 +112,7 @@ const search = ref('')
 const filtered = ref([])
 const itemsPerPage = 5
 const page = ref(1)
+const level = session.get('_userlevel')
 
 //Computed que filtra o array list
 const filteredItems = computed(() => {
@@ -124,12 +134,13 @@ const totalPages = computed(() =>
   Math.ceil(filtered.value.length / itemsPerPage)
 )
 
+//Abaixo ficam os métodos/funções
+
 function paginatedItems(items) {
   const start = (page.value - 1) * itemsPerPage
   return items.slice(start, start + itemsPerPage)
 }
 
-//Abaixo ficam os métodos/funções
 function createItem() {
   store.commit('updateStateProperty', {
     objectName: 'modal',
@@ -153,6 +164,16 @@ function delItem(item) {
   })
 }
 
+function setores(item){
+
+    user(item)
+
+    this.$store.commit('updateStateProperty', {
+        objectName: 'modalSetor',
+        value: true
+    });
+}
+
 function user(item) {
   store.commit('updateStateProperty', {
     objectName: 'user',
@@ -167,6 +188,7 @@ function user(item) {
     mode: 'replace',
   })
 }
+
 </script>
 
 <style scoped lang="scss">

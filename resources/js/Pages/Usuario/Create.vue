@@ -3,7 +3,7 @@
 <v-container>
     <!-- Modal -->
     <v-dialog
-        v-model="store.state.modal" max-width="600px"
+        v-model="store.state.modal" max-width="700px"
         persistent
     >
         <v-card>
@@ -20,7 +20,7 @@
 
                             <v-row dense>
 
-                                <v-col cols="12">
+                                <v-col cols="12" md="6">
                                     <v-text-field
                                         v-model="store.state.user.name"
                                         label="Nome"
@@ -34,8 +34,7 @@
                                         </template>
                                     </v-text-field>
                                 </v-col>
-
-                                <v-col cols="12">
+                                <v-col cols="12" md="6">
                                     <v-text-field
                                         v-model="store.state.user.email"
                                         label="E-mail"
@@ -49,6 +48,23 @@
                                     </v-text-field>
                                 </v-col>
 
+                                <v-col cols="12" md="6">
+                                    <v-autocomplete
+                                        v-model="store.state.user.level"
+                                        variant="outlined"
+                                        :items="store.state.levels"
+                                        item-value="id"
+                                        item-title="name"
+                                        @update:modelValue="changeLevel"
+                                    >
+                                        <template #label>
+                                            <Label
+                                                label="Nível"
+                                            />
+                                        </template>
+                                    </v-autocomplete>
+                                </v-col>
+                                
                                 <v-col cols="12" md="6">
                                     <v-text-field
                                         label="Senha"
@@ -64,22 +80,6 @@
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-autocomplete
-                                        v-model="store.state.user.level"
-                                        variant="outlined"
-                                        :items="store.state.levels"
-                                        item-value="id"
-                                        item-title="name"
-                                    >
-                                        <template #label>
-                                            <Label
-                                                label="Nível"
-                                            />
-                                        </template>
-                                    </v-autocomplete>
-                                </v-col>
-                                
-                                <v-col cols="12">
                                     <v-file-input
                                         label="Foto"
                                         v-model="file"
@@ -114,17 +114,31 @@
 
 import { ref } from 'vue';
 import { useStore } from 'vuex'
+import session from 'js-cookie'
 
 import model from "@/Modules/model.js"
 import clear from "@/Modules/clear.js"
 import Label from "@/Components/Label.vue"
 import { Inertia } from '@inertiajs/inertia'
 
+//Define as propriedades vindas do php
+const props = defineProps({
+  ers: {type: Array, required: true},
+  els: {type: Array, required: true},
+  etas: {type: Array, required: true},
+  level: {type: String, required: true},
+})
+
 //Declara variáveis/constantes
 const file = ref(null)
+const level = session.get('_userlevel')
 
 //Instancia um vuex
 const store = useStore()
+
+levels(props.level)
+
+//Métodos/Funções
 
 function save(){
 
@@ -158,7 +172,6 @@ function save(){
 
             message('success', response.data.success)
 
-            //navigateTo(`${store.state.urlBase}/usuarios`)
             Inertia.visit(`${store.state.urlBase}/usuarios`)
 
         }).catch(error => {
@@ -214,6 +227,30 @@ function message(type, body){
     if(type === 'success'){
 
         close()
+    }
+}
+
+function levels(level){
+
+    if(level < 4){
+
+        store.commit('updateStateProperty', {
+            objectName: 'levels',
+            value: store.state.levels.filter(item => item.id <= level),
+            mode: 'replace',
+        })
+    }
+}
+
+function changeLevel(val){
+
+    if(val !== 1){
+
+        store.commit('updateStateProperty', {
+            objectName: 'user',
+            key: 'eta',
+            value: ''
+        });
     }
 }
 

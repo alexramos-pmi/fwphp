@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Core\ImageUploader;
-use App\Http\Request;
-use App\Models\Usuario;
-use App\Foundation\Http;
-use App\Support\Validate;
 use Exception;
+use App\Core\Auth;
+use App\Http\Request;
+use App\Models\ElModel;
+use App\Models\ErModel;
+use App\Foundation\Http;
+use App\Models\EtaModel;
+use App\Support\Validate;
+use App\Core\ImageUploader;
+use App\Models\UsuarioModel;
 
 class UsuarioController
 {
     public function index()
     {
-        $usuarios = Usuario::orderBy('name')->get();
+        $usuarios = UsuarioModel::orderBy('name')->get();
 
         $list = [];
 
-        if(Usuario::count())
+        if(UsuarioModel::count())
         {
             foreach($usuarios as $usuario)
             {
@@ -41,7 +45,7 @@ class UsuarioController
         try
         {
             $validate = new Validate($request->all(), 0);
-            $validate->setModel(new Usuario());
+            $validate->setModel(new UsuarioModel());
 
             $validate->require('name', 'Nome');
             $validate->unique('name', 'Nome');
@@ -70,7 +74,7 @@ class UsuarioController
                 $request->set('cover', $result['filename']);
             }
 
-            $usuario = Usuario::create($request->all());
+            $usuario = UsuarioModel::create($request->all());
             $nome = $usuario->name;
 
             return response()->json(['success' => "Usuário {$nome} gravado com sucesso"], Http::OK);
@@ -88,7 +92,7 @@ class UsuarioController
         try
         {
             $validate = new Validate($request->all(), $id);
-            $validate->setModel(new Usuario());
+            $validate->setModel(new UsuarioModel());
 
             $validate->require('name', 'Nome');
             $validate->unique('name', 'Nome');
@@ -113,16 +117,22 @@ class UsuarioController
             }
             
             //Consulta usuário
-            $usuario = Usuario::find($id);
+            $usuario = UsuarioModel::find($id);
 
             //Verifica se existe arquivo
             if($request->file('file'))
             {
+                $cover = $usuario->cover ? $usuario->cover : 'default.jpg';
+
                 $uploader = (new ImageUploader())
                 ->setFile($request->file('file'))
                 ->setDimensions(500, 500)
                 ->keepAspectRatio(true) //Corta e ajusta a imagem
+<<<<<<< HEAD
                 ->unlink($usuario->cover); //Exclui a foto antiga, caso exista
+=======
+                ->unlink($cover); //Exclui a foto antiga, caso exista
+>>>>>>> 5c7bf29705850666a4329fa9e091dfcf25d4e5f5
 
                 $result = $uploader->upload();
                 $request->set('cover', $result['filename']);
@@ -152,12 +162,20 @@ class UsuarioController
     {
         try
         {
-            $usuario = Usuario::find($id);
+            $usuario = UsuarioModel::find($id);
+            $cover = $usuario->cover;
             $nome = $usuario->name;
 
-            if($usuario->level === 2 && Usuario::where('level', 2)->count() <= 1)
+            if($usuario->level === 2 && UsuarioModel::where('level', 2)->count() <= 1)
             {
                 throw new Exception("O sistema deve ter pelo menos 1 administrador");
+            }
+
+            $image = public_path("images/{$cover}");
+
+            if(file_exists($image))
+            {
+                unlink($image);
             }
 
             $usuario->delete();

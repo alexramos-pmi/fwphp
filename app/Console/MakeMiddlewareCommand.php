@@ -19,37 +19,55 @@ class MakeMiddlewareCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $name = ucfirst($input->getArgument('name'));
-        $directory = __DIR__ . '/../Http/Middleware';
-        $filePath = "{$directory}/{$name}.php";
+        $name = $input->getArgument('name');
 
-        if (!is_dir($directory)) {
-            mkdir($directory, 0777, true);
+        // Divide o nome em partes: Admin/AuthMiddleware -> ['Admin', 'AuthMiddleware']
+        $pathParts = explode('/', str_replace('\\', '/', $name));
+        $className = ucfirst(array_pop($pathParts));
+        $namespacePath = implode('\\', array_map('ucfirst', $pathParts));
+        $directoryPath = implode(DIRECTORY_SEPARATOR, array_map('ucfirst', $pathParts));
+
+        $baseDir = __DIR__ . '/../Http/Middleware';
+        $fullDir = $baseDir . ($directoryPath ? DIRECTORY_SEPARATOR . $directoryPath : '');
+        $filePath = $fullDir . DIRECTORY_SEPARATOR . $className . '.php';
+
+        // Cria os diretórios necessários
+        if (!is_dir($fullDir)) {
+            mkdir($fullDir, 0777, true);
         }
 
+        // Verifica se já existe
         if (file_exists($filePath)) {
-            $output->writeln("<error>O middleware '{$name}' já existe.</error>");
+            $output->writeln("<error>O middleware '{$className}' já existe em '{$fullDir}'.</error>");
             return Command::FAILURE;
         }
 
+        // Define o namespace correto
+        $namespace = 'App\\Http\\Middleware' . ($namespacePath ? '\\' . $namespacePath : '');
+
+        // Conteúdo do middleware
         $content = <<<PHP
-<?php
+        <?php
 
-namespace App\Http\Middleware;
+        namespace {$namespace};
 
-class {$name}
-{
-    public function handle(\$request, \Closure \$next)
-    {
-        // Lógica do middleware aqui
+        class {$className}
+        {
+            public function handle(\$request, \Closure \$next)
+            {
+                // Lógica do middleware aqui
 
-        return \$next(\$request);
-    }
-}
-PHP;
+                return \$next(\$request);
+            }
+        }
+        PHP;
 
+        $content = ltrim($content); // Garante que <?php esteja no topo
+
+        // Salva o arquivo
         file_put_contents($filePath, $content);
-        $output->writeln("<info>Middleware {$name} criado com sucesso.</info>");
+
+        $output->writeln("<info>Middleware {$className} criado com sucesso em {$filePath}.</info>");
 
         return Command::SUCCESS;
     }

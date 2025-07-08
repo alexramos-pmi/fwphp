@@ -2,14 +2,14 @@
 
 namespace App\Core;
 
-use App\Models\Usuario;
+use App\Models\UsuarioModel;
 
 class Auth
 {
     public static function attempt(string $email, string $password): bool
     {
         // Exemplo: busca na base de dados
-        $user = Usuario::where('email', $email)->first();
+        $user = UsuarioModel::where('email', $email)->first();
 
         if(!$user || !password_verify($password, $user->password))
         {
@@ -25,7 +25,7 @@ class Auth
     {
         if (!isset($_SESSION['user_id'])) return null;
 
-        return Usuario::find($_SESSION['user_id']);
+        return UsuarioModel::find($_SESSION['user_id']);
     }
 
     public static function check(): bool

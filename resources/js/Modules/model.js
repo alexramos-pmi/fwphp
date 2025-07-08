@@ -11,8 +11,9 @@ else{
   console.warn('CSRF token não encontrado no <meta>')
 }
 
-axios.defaults.baseURL = 'http://localhost/fwphp/public'
+//axios.defaults.baseURL = 'http://localhost/fwphp/public'
 //axios.defaults.baseURL = 'http://localhost:8000'
+axios.defaults.baseURL = 'https://fwphp.devalx.com.br'
 axios.defaults.headers.common['accept'] = 'application/json'
 axios.defaults.withCredentials = true;
 
