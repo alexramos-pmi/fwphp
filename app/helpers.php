@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Auth;
 use Symfony\Component\VarDumper\VarDumper;
 use Dotenv\Dotenv;
 
@@ -160,10 +161,10 @@ if(!function_exists('loadEnv'))
         }
 
         // Se for produção, use .env.production
-        if($env === 'production')
-        {
-            $envFile = '.env.production';
-        }
+        // if($env === 'production')
+        // {
+        //     $envFile = '.env.production';
+        // }
 
         if(file_exists("$dotenvPath/$envFile"))
         {
@@ -188,9 +189,11 @@ if(!function_exists('logger'))
         $file = __DIR__ . '/../storage/logs/' . date('Y-m-d') . '.log';
 
         $entry = sprintf(
-            "[%s] [%s] %s\n",
+            "[%s] [%s] [%s] [%s] %s\n",
             date('Y-m-d H:i:s'),
-            strtoupper($level),
+            Auth::user()->name,
+            Auth::user()->email,
+            mb_strtoupper($level),
             $message
         );
 
@@ -245,16 +248,64 @@ if(!function_exists('public_path'))
     function public_path(string $path = ''): string
     {
         // Ajuste o caminho conforme a estrutura do seu projeto
-        $base = realpath(__DIR__ . '/../storage');
+        $base = __DIR__ . '/../public';
 
-        return $path ? $base . '/' . ltrim($path, '/') : $base;
+        $path = $path ? $base . '/' . ltrim($path, '/') : $base;
+
+        return $path;
     }
 }
 
-if(!function_exists('render404'))
+if(!function_exists('cachear'))
 {
-    function render404(string $uri): void
+    function cachear($chave, callable $callback, $expiracao = 86400)
     {
+        static $memCache = [];
+
+        if (isset($memCache[$chave])) {
+            return $memCache[$chave];
+        }
+
+        $arquivo = __DIR__ . "/../cache/{$chave}.php";
+
+        if (file_exists($arquivo)) {
+            $tempo = filemtime($arquivo);
+            if ((time() - $tempo) < $expiracao) {
+                return $memCache[$chave] = require $arquivo;
+            }
+        }
+
+        $dados = $callback();
+
+        // 🔁 Garante que $dados seja array
+        if ($dados instanceof \Illuminate\Support\Collection) {
+            $dados = $dados->all();
+        }
+
+        if (!is_array($dados)) {
+            $dados = [$dados];
+        }
+
+        // ✅ Converte Eloquent → array → objeto (stdClass)
+        $dadosObjetos = array_map(function ($item) {
+            $array = method_exists($item, 'toArray') ? $item->toArray() : (array) $item;
+            return (object) $array;
+        }, $dados);
+
+        // 💾 Salva como array de objetos em arquivo .php
+        $conteudo = '<?php return ' . var_export($dadosObjetos, true) . ';';
+        file_put_contents($arquivo, $conteudo);
+
+        return $memCache[$chave] = $dadosObjetos;
+    }
+}
+
+if(!function_exists('alert'))
+{
+    function alert(string $title, string $message, int $code): void
+    {
+        $url = env('APP_URL') . '/public/login';
+        
         echo <<<HTML
             <!DOCTYPE html>
             <html lang="pt-BR">
@@ -313,10 +364,10 @@ if(!function_exists('render404'))
                 </head>
                 <body>
                     <div class="container">
-                        <h1>404</h1>
-                        <h2>Página não encontrada</h2>
-                        <p>A rota <strong>{$uri}</strong> não existe ou não está disponível.</p>
-                        <a href="/">Voltar para a página inicial</a>
+                        <h1>{$code}</h1>
+                        <h2>{$title}</h2>
+                        <p>{$message}</p>
+                        <a href="{$url}">Página de Login</a>
                     </div>
                 </body>
             </html>

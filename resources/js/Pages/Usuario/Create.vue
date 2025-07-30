@@ -63,8 +63,7 @@
                                             />
                                         </template>
                                     </v-autocomplete>
-                                </v-col>
-                                
+                                </v-col>   
                                 <v-col cols="12" md="6">
                                     <v-text-field
                                         label="Senha"
@@ -123,18 +122,14 @@ import { Inertia } from '@inertiajs/inertia'
 
 //Define as propriedades vindas do php
 const props = defineProps({
-  ers: {type: Array, required: true},
-  els: {type: Array, required: true},
-  etas: {type: Array, required: true},
   level: {type: String, required: true},
 })
 
-//Declara variáveis/constantes
-const file = ref(null)
-const level = session.get('_userlevel')
-
 //Instancia um vuex
 const store = useStore()
+
+//Declara variáveis/constantes
+const file = ref(null)
 
 levels(props.level)
 
@@ -155,9 +150,9 @@ function save(){
     formData.append('name', store.state.user.name)
     formData.append('email', store.state.user.email)
     formData.append('password', store.state.user.password)
-    formData.append('level', store.state.user.level)
-    formData.append('cover', store.state.user.cover)
-    formData.append('file', file.value)
+    formData.append('level', store.state.user.level ? store.state.user.level : '')
+    formData.append('cover', store.state.user.cover ? store.state.user.cover : '')
+    formData.append('file', file.value ? file.value : '')
 
     if(id <= 0){
 
@@ -197,7 +192,6 @@ function save(){
 
             message('success', response.data.success)
 
-            //navigateTo(`${store.state.urlBase}/usuarios`)
             Inertia.visit(`${store.state.urlBase}/usuarios`)
 
         }).catch(error => {
@@ -239,18 +233,6 @@ function levels(level){
             value: store.state.levels.filter(item => item.id <= level),
             mode: 'replace',
         })
-    }
-}
-
-function changeLevel(val){
-
-    if(val !== 1){
-
-        store.commit('updateStateProperty', {
-            objectName: 'user',
-            key: 'eta',
-            value: ''
-        });
     }
 }
 

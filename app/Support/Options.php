@@ -100,6 +100,14 @@ class Options
             3 => 'Fechamento'
         ];
     }
+    
+    public static function medidas()
+    {
+        return [
+            1 => 'Kg',
+            2 => 'L'
+        ];
+    }
 
     public static function bombas()
     {

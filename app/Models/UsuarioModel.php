@@ -19,7 +19,7 @@ class UsuarioModel extends Model
     ];
 
     protected $appends = [
-        'level_name'
+        'level_name',
     ];
 
     public function getLevelNameAttribute()

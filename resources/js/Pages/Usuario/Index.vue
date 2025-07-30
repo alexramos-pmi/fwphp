@@ -76,9 +76,6 @@
     </v-row>
 
     <Create 
-      :ers="props.ers" 
-      :els="props.els" 
-      :etas="props.etas"  
       :level
     />
     
@@ -142,6 +139,7 @@ function paginatedItems(items) {
 }
 
 function createItem() {
+
   store.commit('updateStateProperty', {
     objectName: 'modal',
     value: true,
@@ -149,7 +147,9 @@ function createItem() {
 }
 
 function editItem(item) {
+
   user(item)
+
   store.commit('updateStateProperty', {
     objectName: 'modal',
     value: true,
@@ -157,21 +157,13 @@ function editItem(item) {
 }
 
 function delItem(item) {
+
   user(item)
+
   store.commit('updateStateProperty', {
     objectName: 'modalDel',
     value: true,
   })
-}
-
-function setores(item){
-
-    user(item)
-
-    this.$store.commit('updateStateProperty', {
-        objectName: 'modalSetor',
-        value: true
-    });
 }
 
 function user(item) {

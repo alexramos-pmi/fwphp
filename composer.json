@@ -17,11 +17,7 @@
         "intervention/image": "^3.11",
         "phpmailer/phpmailer": "^6.10",
         "dompdf/dompdf": "^3.0",
-<<<<<<< HEAD
-        "illuminate/database": "^12.17"
-=======
         "illuminate/database": "^12.17",
         "ramsey/uuid": "^4.8"
->>>>>>> 5c7bf29705850666a4329fa9e091dfcf25d4e5f5
     }
   }

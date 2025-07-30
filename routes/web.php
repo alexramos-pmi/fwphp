@@ -15,6 +15,8 @@ Route::middleware(['auth'])->group(function()
     Route::get('/', 'HomeController@index');
     //USUÁRIO
     Route::get('usuarios', 'UsuarioController@index');
+    Route::get('usuarios/els/{er}', 'UsuarioController@els');
+    Route::get('usuarios/etas/{el}', 'UsuarioController@etas');
     Route::post('usuarios/store', 'UsuarioController@store');
     Route::put('usuarios/update/{id}', 'UsuarioController@update');
     Route::delete('usuarios/delete/{id}', 'UsuarioController@destroy');

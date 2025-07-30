@@ -2,13 +2,13 @@ import { createStore } from "vuex";
 
 export default createStore({
     state:{
-        //urlBase: 'http://localhost/fwphp/public',
+        urlBase: 'http://localhost/fwphp/public',
         //urlBase: 'http://localhost:8000',
-        urlBase: 'https://fwphp.devalx.com.br',
         modal: false,
         modalDel: false,
         modalPdf: false,
         modalAnexo: false,
+        modalSetor: false,
         drawer: false,
         alternativas: [
             {id: 1, name: 'Sim'},

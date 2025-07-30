@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Adapters\Contracts\ImageUploadAdapter;
+use App\Adapters\Contracts\ValidateAdapter;
 use Exception;
 use App\Core\Auth;
 use App\Http\Request;
@@ -9,14 +11,20 @@ use App\Models\ElModel;
 use App\Models\ErModel;
 use App\Foundation\Http;
 use App\Models\EtaModel;
-use App\Support\Validate;
-use App\Core\ImageUploader;
 use App\Models\UsuarioModel;
 
 class UsuarioController
 {
+    public function __construct(
+        private ImageUploadAdapter $imageUploadAdapter, 
+        private ValidateAdapter $validateAdapter
+    ){}
+
     public function index()
     {
+        $id = Auth::user()->id;
+        $level = Auth::user()->level;
+
         $usuarios = UsuarioModel::orderBy('name')->get();
 
         $list = [];
@@ -32,7 +40,8 @@ class UsuarioController
                     'level' => $usuario->level,
                     'cover' => $usuario->cover,
                     'path' => url('images/' . $usuario->cover),
-                    'level_name' => $usuario->level_name
+                    //Atributos adicionados
+                    'level_name' => $usuario->level_name,
                 ];
             }
         }
@@ -44,29 +53,12 @@ class UsuarioController
     {
         try
         {
-            $validate = new Validate($request->all(), 0);
-            $validate->setModel(new UsuarioModel());
-
-            $validate->require('name', 'Nome');
-            $validate->unique('name', 'Nome');
-            $validate->max('name', 'Nome', 100);
-            $validate->require('email', 'Email');
-            $validate->unique('email', 'E-mail');
-            $validate->max('email', 'E-mail', 100);
-            $validate->require('password', 'Senha');
-            $validate->require('level', 'Nível');
-
-            if($validate->getErrors())
-            {
-                throw new Exception($validate->getErrors());
-            }
-
-            $request->set('password', bcrypt($request->input('password')));
+            //Adaptador que realiza as validações do form
+            $request = $this->validateAdapter->run($request);
 
             if($request->file('file'))
             {
-                $uploader = (new ImageUploader())
-                ->setFile($request->file('file'))
+                $uploader = $this->imageUploadAdapter->setFile($request->file('file'))
                 ->setDimensions(500, 500)
                 ->keepAspectRatio(true);
 
@@ -76,6 +68,9 @@ class UsuarioController
 
             $usuario = UsuarioModel::create($request->all());
             $nome = $usuario->name;
+
+            //Cria o log
+            logger("Criou: {$nome}", "Criar");
 
             return response()->json(['success' => "Usuário {$nome} gravado com sucesso"], Http::OK);
         }
@@ -91,30 +86,8 @@ class UsuarioController
 
         try
         {
-            $validate = new Validate($request->all(), $id);
-            $validate->setModel(new UsuarioModel());
-
-            $validate->require('name', 'Nome');
-            $validate->unique('name', 'Nome');
-            $validate->max('name', 'Nome', 100);
-            $validate->require('email', 'Email');
-            $validate->unique('email', 'E-mail');
-            $validate->max('email', 'E-mail', 100);
-            $validate->require('level', 'Nível');
-
-            if($validate->getErrors())
-            {
-                throw new Exception($validate->getErrors());
-            }
-
-            if(!empty($request->input('password')))
-            {
-                $request->set('password', bcrypt($request->input('password')));
-            }
-            else
-            {
-                $request->remove('password');
-            }
+            //Adaptador que realiza as validações do form
+            $request = $this->validateAdapter->run($request, $id);
             
             //Consulta usuário
             $usuario = UsuarioModel::find($id);
@@ -122,17 +95,13 @@ class UsuarioController
             //Verifica se existe arquivo
             if($request->file('file'))
             {
-                $cover = $usuario->cover ? $usuario->cover : 'default.jpg';
+                $cover = $usuario ? $usuario->cover : null;
 
-                $uploader = (new ImageUploader())
-                ->setFile($request->file('file'))
+                //Adaptador para upload de imagens
+                $uploader = $this->imageUploadAdapter->setFile($request->file('file'))
                 ->setDimensions(500, 500)
                 ->keepAspectRatio(true) //Corta e ajusta a imagem
-<<<<<<< HEAD
-                ->unlink($usuario->cover); //Exclui a foto antiga, caso exista
-=======
                 ->unlink($cover); //Exclui a foto antiga, caso exista
->>>>>>> 5c7bf29705850666a4329fa9e091dfcf25d4e5f5
 
                 $result = $uploader->upload();
                 $request->set('cover', $result['filename']);
@@ -149,6 +118,9 @@ class UsuarioController
             //Captura o nome do usuário
             $nome = $usuario->name;
             $usuario->fill($request->all())->save();
+
+            //Cria o log
+            logger("Editou: {$nome}", "Usuário - Editar");
 
             return response()->json(['success' => "Usuário {$nome} atualizado com sucesso"], Http::OK);
         }
@@ -179,6 +151,9 @@ class UsuarioController
             }
 
             $usuario->delete();
+
+            //Cria o log
+            logger("Excluiu: {$nome}", "Usuário - Excluir");
 
             return response()->json(['success' => "Usuário {$nome} excluído com sucesso"], Http::OK);
         }

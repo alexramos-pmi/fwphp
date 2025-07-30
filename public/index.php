@@ -16,7 +16,6 @@ ini_set('session.cookie_lifetime', $lifetime);
 //Inicia a sessão
 session_start();
 
-//Verifica o csrf token
 if(!isset($_SESSION['_csrf_token']))
 {
     $_SESSION['_csrf_token'] = bin2hex(random_bytes(32));
@@ -25,24 +24,8 @@ if(!isset($_SESSION['_csrf_token']))
 //Inclue os dados de conexão para o Eloquent ORM
 require_once __DIR__ . '/../bootstrap/app.php';
 
-<<<<<<< HEAD
-//Carrega as variáveis de ambiente
-loadEnv();
-
-require_once __DIR__ . '/../bootstrap/app.php';
-
-=======
 //Inclue o timezone
 $appConfig = require __DIR__ . '/../config/app.php';
-
-if(!empty($appConfig['timezone']))
-{
-    date_default_timezone_set($appConfig['timezone']);
-}
-
-//Inclue as rotas
->>>>>>> 5c7bf29705850666a4329fa9e091dfcf25d4e5f5
-use App\Routing\Route;
 
 //Display errors
 if(env('APP_ENV') === 'production')
@@ -57,8 +40,14 @@ else
     error_reporting(E_ALL);
 }
 
+//Inclue as rotas
+use App\Routing\Route;
+
 // Carrega rotas do sistema
 require_once __DIR__ . '/../routes/web.php';
+
+//Injeta dependências nos construtores dos controladores das rotas: param 1 = interface, param 2 = classe concreta
+require_once __DIR__ . '/../bootstrap/container.php';
 
 // Processa requisição atual
 Route::dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);

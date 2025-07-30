@@ -9,6 +9,8 @@ class Kernel
     protected static array $globalMiddlewares = [
         \App\Http\Middleware\Cors::class,
         \App\Http\Middleware\VerifyCsrfToken::class,
+        \App\Http\Middleware\SessionTimeout::class, // Adicione aqui
+        // outros middlewares globais...
     ];
 
     protected static array $routeMiddlewares = [
@@ -20,6 +22,7 @@ class Kernel
     {
         // Monta lista completa de middlewares a serem executados
         $middlewareClasses = array_merge(
+            
             self::$globalMiddlewares,
             array_map(fn($key) => self::$routeMiddlewares[$key] ?? null, $routeMiddlewareKeys)
         );
@@ -31,11 +34,14 @@ class Kernel
 
         // Envelopa cada middleware ao redor do próximo
         $pipeline = array_reduce(
+
             array_reverse($middlewareClasses),
+
             function($next, $middlewareClass)
             {
                 return fn($req) => $middlewareClass::handle($req, $next);
             },
+
             $core
         );
 

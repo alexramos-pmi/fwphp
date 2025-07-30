@@ -4,6 +4,8 @@ namespace App\Routing;
 
 use App\Http\Kernel;
 use App\Http\Request;
+use App\Core\Container;
+use App\Foundation\Http;
 use App\Http\Middleware\VerifyCsrfToken;
 
 class Route
@@ -104,7 +106,8 @@ class Route
                     return;
                 }
 
-                $controller = new $controllerClass();
+                //Permite injetar dependências nos construtores dos controladores das rotas
+                $controller = Container::resolve($controllerClass);
 
                 if(!method_exists($controller, $methodName))
                 {
@@ -155,6 +158,7 @@ class Route
         }
 
         http_response_code(404);
-        render404($uri);
+
+        alert("Página não encontrada", "A rota <strong>{$uri}</strong> não existe ou não está disponível.", Http::NOT_FOUND);
     }
 }
